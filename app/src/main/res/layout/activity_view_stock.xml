@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".UserRecord">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.35"
+            android:text="LOCATION"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="16dp"></TextView>
+
+        <TextView
+            android:id="@+id/txt_locaion"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.65"
+            android:text="DIY+001+A0101"
+            android:gravity="left|center"
+            android:textColor="#000000"
+            android:textSize="16dp"></TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#3399FF"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:text = "SEQ"
+            android:textColor="#000000"
+            android:gravity="center">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.45"
+            android:text = "SKU/BARCODE"
+            android:textColor="#000000"
+            android:gravity="center">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:text = "QTY"
+            android:textColor="#000000"
+            android:gravity="center">
+
+        </TextView>
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/lv1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addmore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="30dp"
+            app:backgroundTint="#FFBDB8"
+            app:srcCompat="@drawable/plus"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+</LinearLayout>

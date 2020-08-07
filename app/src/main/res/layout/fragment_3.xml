@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="#50D2C2"
+            android:layout_weight="1"
+            android:weightSum="2"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:text="SAVED FILES"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:gravity="center"></TextView>
+
+            <TextView
+                android:id="@+id/saved_files"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:text="30"
+                android:textColor="#FFFFFF"
+                android:textSize="40dp"
+                android:gravity="center"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="#D667CD"
+            android:weightSum="2"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:text="LAST UPLOAD"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:gravity="center"></TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:text="03/07/20"
+                android:textColor="#FFFFFF"
+                android:textSize="38dp"
+                android:gravity="center"></TextView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SERVER IP ADDRESS"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:id="@+id/ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:visibility="invisible"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BUSINESS UNIT"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </EditText>
+        </LinearLayout>
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginRight="20dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:visibility="invisible"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="STORE NAME"-->
+<!--                android:textColor="#AD807D">-->
+<!--            </TextView>-->
+<!--            <EditText-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+
+<!--            </EditText>-->
+<!--        </LinearLayout>-->
+
+
+
+
+
+        <Button
+            android:id="@+id/btn_upload"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/upload">
+
+        </Button>
+    </LinearLayout>
+
+
+</LinearLayout>

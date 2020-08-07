@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/info_bg"
+    tools:context=".UserRecord">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.65"
+                android:text="COUNT ID : 0000460635"
+                android:textColor="#000000"
+                android:textSize="15dp"></TextView>
+
+            <ImageView
+                android:layout_width="6dp"
+                android:layout_height="20dp"
+                android:layout_weight="0.05"
+                android:background="@drawable/time">
+            </ImageView>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:text="04/04/2020"
+                android:textColor="#000000"
+                android:textSize="15dp"
+                ></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#FFFFFF"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="3dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.15">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/oval">
+
+                </ImageView>
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="668"
+                    android:textSize="16dp"
+                    android:textColor="#FFFFFF">
+
+                </TextView>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:orientation="vertical"
+                android:layout_marginLeft="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TOPS Supermarket"
+                    android:textColor="#000000"
+                    android:textSize="14dp"></TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TMS Srisaman"
+                    android:textColor="#000000"
+                    android:textSize="12dp"></TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.05"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:background="@drawable/completed"
+                    android:layout_gravity="center"></ImageView>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DOCUMENT NO."
+                android:textSize="12dp"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:id="@+id/doc_no"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:layout_height="33dp"
+                android:inputType="none">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:text="COUNT DATE"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:id="@+id/count_date"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:layout_height="33dp">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="STORE NAME"
+                android:textSize="12dp"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:id="@+id/store"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:inputType="none"
+                android:layout_height="33dp">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="INSPECTOR"
+                android:textSize="12dp"
+                android:textColor="#AD807D"></TextView>
+
+            <EditText
+                android:id="@+id/inspector"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:layout_height="33dp">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LOCATION"
+                android:textSize="12dp"
+                android:textColor="#AD807D">
+            </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+            <TextView
+                android:id="@+id/lc"
+                android:layout_width="0dp"
+                android:layout_weight="0"
+                android:layout_height="match_parent"></TextView>
+
+
+                <EditText
+                    android:id="@+id/edt_location"
+                    android:layout_width="match_parent"
+                    android:textSize="12dp"
+                    android:layout_height="33dp">
+
+                </EditText>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nextstep">
+
+        </Button>
+    </LinearLayout>
+
+</LinearLayout>

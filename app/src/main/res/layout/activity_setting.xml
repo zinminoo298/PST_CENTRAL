@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/info_bg"
+    tools:context=".Setting">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SETTING"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:textColor="#ff0000">
+
+    </TextView>
+
+<LinearLayout
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DOCUMENT NO."
+                android:textSize="12dp"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:id="@+id/doc_no"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:layout_height="33dp"
+                android:inputType="none">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:text="Master Data Server IP"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:id="@+id/master_ip"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:layout_height="33dp">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="File Count Alert"
+                android:textSize="12dp"
+                android:textColor="#AD807D">
+            </TextView>
+            <EditText
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:inputType="none"
+                android:text="50"
+                android:layout_height="33dp">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mac Address"
+                android:textSize="12dp"
+                android:textColor="#AD807D"></TextView>
+
+            <EditText
+                android:id="@+id/wifi_mac"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:layout_height="33dp">
+
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="App Version"
+                android:textSize="12dp"
+                android:textColor="#AD807D">
+            </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:orientation="horizontal"
+                android:focusable="false"
+                android:weightSum="1">
+
+                <EditText
+                    android:id="@+id/lc"
+                    android:text="beta_1.0.0"
+                    android:textSize="13dp"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_weight="0"
+                    android:layout_height="match_parent"></EditText>
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/btn_save"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:text="SAVE">
+
+        </Button>
+    </LinearLayout>
+</LinearLayout>
+
+
+</LinearLayout>

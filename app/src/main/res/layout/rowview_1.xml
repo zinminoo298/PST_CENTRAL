@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/txt_filedate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="04/04/20"
+            android:textColor="#0606DD"
+            android:textSize="15dp"></TextView>
+
+        <TextView
+            android:id="@+id/txt_filename"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.65"
+            android:text="SAAAAAAAAAAA2010201"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="15dp"></TextView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            >
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.95"></View>
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_weight="0.05"
+                android:background="@drawable/completed"
+                android:layout_gravity="center">
+            </ImageView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/txt_filetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="11:30"
+                android:textColor="#000000"
+                android:textSize="15dp"></TextView>
+
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.3"-->
+<!--                android:text="AM"-->
+<!--                android:textColor="#000000"-->
+<!--                android:textSize="10dp"></TextView>-->
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/txt_filelocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="DIY+0001+A101"
+                android:textColor="#000000"
+                android:textSize="13dp"></TextView>
+
+            <TextView
+                android:id="@+id/txt_filesummery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="1000"
+                android:gravity="right"
+                android:textColor="#FF3366"
+                android:textSize="13dp"></TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            >
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
