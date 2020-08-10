@@ -15,6 +15,9 @@ import java.io.IOException
 import java.lang.Exception
 import kotlin.math.cos
 
+/*Check RowID*/
+var rowID = 1
+
 /*View stock Data from db*/
 var pdName:String? = ""
 var stock:String? = ""
@@ -32,6 +35,7 @@ var newitem:String? = ""
 /* add stock count data to db */
 var sku:String? = ""
 var qty :Int = 0
+var price:String = ""
 var location :String = ""
 var filename:String = ""
 var insp:String=""
@@ -162,6 +166,103 @@ class DataBase(val context: Context){
 //
 //    }
 
+    fun checkDatabase(){
+        val db = context.openOrCreateDatabase("summery.db",Context.MODE_PRIVATE,null)
+//        val query = "SELECT * FROM summery WHERE Barcode='$sku'"
+//        val cursor = db.rawQuery(query,null)
+//        if(cursor.moveToFirst()){
+//            checkItem1()
+//            updateItem()
+//        }
+//        else{
+            val query = "SELECT ROWID FROM summery"
+            val cursor = db.rawQuery(query,null)
+            if(cursor.moveToLast()){
+                    rowID = cursor.getInt(cursor.getColumnIndex("ROWID"))+1
+                }
+            else{
+                rowID = 1
+            }
+            checkItem1()
+//        }
+    }
+
+    fun updateItem(){
+        val db=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
+
+        val selectQuery=
+            "SELECT QNT FROM summery WHERE Barcode=? AND summery.Location='$location' AND summery.DocNum='$filename'"
+        val cursor=db.rawQuery(selectQuery, arrayOf(sku.toString()))
+        (cursor.moveToFirst())
+        var quantity=cursor.getInt(cursor.getColumnIndex("QNT"))
+        val valu=ContentValues()
+        valu.put("QNT", quantity + qty)
+
+        db.update("summery",valu,"Barcode=? AND Location=? AND DocNum=?", arrayOf(sku.toString(),
+            location, filename))
+        db.close()
+    }
+
+    fun checkItem1(){
+        val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
+        val query = "SELECT * FROM masters WHERE BarcodeIBC='$sku'"
+        val cursor = db.rawQuery(query,null)
+        if(cursor.moveToFirst()){
+            pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
+            stock = cursor.getString(cursor.getColumnIndex("Stock"))
+            packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
+            status = cursor.getString(cursor.getColumnIndex("Status"))
+            cost = cursor.getString(cursor.getColumnIndex("Cost"))
+
+            addItem1()
+        }
+        else{
+            Toast.makeText(context,"NOT FOUND",Toast.LENGTH_SHORT).show()
+        }
+        db.close()
+    }
+
+    fun addItem1(){
+        val db=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
+
+        val values=ContentValues()
+        values.put("ROWID", rowID)
+        values.put("Barcode", sku)
+        values.put("QNT", qty)
+        values.put("Location", location)
+        values.put("DocNum", filename)
+        values.put("Inspector", insp)
+        values.put("ProductName", pdName)
+        values.put("SalePrice", cost)
+        values.put("DateTime",date+" "+time)
+        values.put("StockTakeID","001234")
+//        val id = db.insertWithOnConflict("summery", "null", values,SQLiteDatabase.CONFLICT_IGNORE)
+//        if (id == -1L) {
+//            val selectQuery=
+//                "SELECT QNT FROM summery WHERE Barcode=? AND summery.Location='$location' AND summery.DocNum='$filename'"
+//            val cursor=db.rawQuery(selectQuery, arrayOf(sku.toString()))
+//            (cursor.moveToFirst())
+//            var quantity=cursor.getInt(cursor.getColumnIndex("QNT"))
+//            val valu=ContentValues()
+//            valu.put("QNT", quantity + qty)
+//
+//            db.update("summery",valu,"Barcode=? AND Location=? AND DocNum=?", arrayOf(sku.toString(),
+//                location, filename))
+//        }
+//        else{
+            db.insertWithOnConflict("summery", null, values, SQLiteDatabase.CONFLICT_IGNORE)
+            val query = "SELECT count FROM date WHERE name='$filename' AND location='$location'"
+            val cursor = db.rawQuery(query,null)
+            cursor.moveToFirst()
+            var quantity = cursor.getInt(cursor.getColumnIndex("count"))
+            val valu = ContentValues()
+            valu.put("count",quantity+1)
+            db.update("date",valu,"location=? AND name=?", arrayOf(location, filename))
+            println("ADD COMPLETED")
+//        }
+        db.close()
+    }
+
     fun addItem() {
 
         val db=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
@@ -240,7 +341,7 @@ class DataBase(val context: Context){
             }
         }
         catch(e:Exception){
-           Toast.makeText(context,"Please Download Master",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,"Please Download Master",Toast.LENGTH_SHORT).show()
         }
 
         val db0=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)

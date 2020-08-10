@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -32,6 +33,10 @@ class Check_stock : AppCompatActivity() {
     internal lateinit var edt_desc:EditText
     internal lateinit var btn_save:Button
     internal lateinit var btn_cancel:Button
+
+    private var progressBar1: ProgressBar? =null
+    internal lateinit var dialog: AlertDialog
+    internal lateinit var export: Button
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +73,8 @@ class Check_stock : AppCompatActivity() {
 
             when (menuItem.itemId) {
                 R.id.action_clear -> {
+                    exportDialog(R.style.DialogSlide,this)
+
                 }
 
                 R.id.action_edit -> {
@@ -107,30 +114,30 @@ class Check_stock : AppCompatActivity() {
                     sku =   scan_bc.text.toString()
                     qty =Integer.parseInt(scan_qty.text.toString())
                     filename = txt_doc.text.toString()
-                    db.checkItem()
-                    if(ck_item == 0){
-//                        Toast.makeText(this,"DATA NOT FOUND",Toast.LENGTH_SHORT).show()
-                        dialog()
-                        scan_bc.setText("")
-
-
-                    }
-                    else{
-                        db.addItem()
-
-                        db.viewData()
-                        if(check == 0){
-                            txt_sku_qty.setText(sku_qty)
-                            txt_lc_qty.setText(lc_qty)
-                            txt_pdName.setText(newitem)
-                            txt_cost.setText("")
-                            txt_pack.setText("")
-                            txt_status.setText("")
-                            txt_stock.setText("")
-                            txt_sku_name.setText(scan_bc.text.toString())
-                            total_am.setText(lc_value)
-                        }
-                        else{
+                    db.checkDatabase()
+//                    if(ck_item == 0){
+////                        Toast.makeText(this,"DATA NOT FOUND",Toast.LENGTH_SHORT).show()
+//                        dialog()
+//                        scan_bc.setText("")
+//
+//
+//                    }
+//                    else{
+//                        db.addItem()
+//
+//                        db.viewData()
+//                        if(check == 0){
+//                            txt_sku_qty.setText(sku_qty)
+//                            txt_lc_qty.setText(lc_qty)
+//                            txt_pdName.setText(newitem)
+//                            txt_cost.setText("")
+//                            txt_pack.setText("")
+//                            txt_status.setText("")
+//                            txt_stock.setText("")
+//                            txt_sku_name.setText(scan_bc.text.toString())
+//                            total_am.setText(lc_value)
+//                        }
+//                        else{
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText(lc_qty)
                             txt_pdName.setText(pdName)
@@ -140,22 +147,22 @@ class Check_stock : AppCompatActivity() {
                             txt_stock.setText(stock.toString())
                             txt_sku_name.setText(scan_bc.text.toString())
                             total_am.setText(lc_value)
-                        }
-
-                        getTime()
-                        val line = "$doc_name,$insp,$location,${scan_bc.text.toString()},$pdName,$cost,${scan_qty.text.toString()},$formatted_date"
-                        val sb = StringBuilder()
-                        var rest = 188 - line.length
-                        sb.append(line)
-                        for(i in 1..rest){
-                            sb.append(" ")
-                        }
-                        println(sb.toString())
-                        writeToFile(line,this)
-
-                        Toast.makeText(this, "Scan Completed", Toast.LENGTH_SHORT).show()
-                        scan_bc.setText("")
-                    }
+//                        }
+//
+//                        getTime()
+//                        val line = "$doc_name,$insp,$location,${scan_bc.text.toString()},$pdName,$cost,${scan_qty.text.toString()},$formatted_date"
+//                        val sb = StringBuilder()
+//                        var rest = 188 - line.length
+//                        sb.append(line)
+//                        for(i in 1..rest){
+//                            sb.append(" ")
+//                        }
+//                        println(sb.toString())
+//                        writeToFile(line,this)
+//
+//                        Toast.makeText(this, "Scan Completed", Toast.LENGTH_SHORT).show()
+//                        scan_bc.setText("")
+//                    }
 
                 }
             }
@@ -273,6 +280,170 @@ class Check_stock : AppCompatActivity() {
             }
             return seItem
         }
+
+    private fun exportDialog(type: Int, context: Context) {
+
+        val builder= AlertDialog.Builder(this)
+        val inflater=this.layoutInflater
+        val view=inflater.inflate(R.layout.activity_export, null)
+        builder.setView(view)
+        dialog=builder.create()
+        dialog.window?.attributes?.windowAnimations=type
+        dialog.setMessage("THE DATA WILL BE EXPORTED TO Downloads/Qtydata.txt")
+        progressBar1 = view.findViewById(R.id.progress_bar)
+        progressBar1!!.visibility = View.GONE
+        dialog.show()
+
+        export = view.findViewById(R.id.btn_export)
+        export.setOnClickListener {
+            progressBar1!!.visibility = View.VISIBLE
+
+            Handler().postDelayed({
+
+                val filepath="/storage/emulated/0/Download/Qtydata.txt"
+                val file=File(filepath)
+                if(file.exists())
+                {
+                    export()
+//                Toast.makeText(this, "FILE EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
+
+                }
+                else{
+                    generateNoteOnSD(this,"/Qtydata.txt/")
+                    if(file.exists())
+                    {
+                        export()
+//                    Toast.makeText(this, "FILE EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
+                    }
+
+                    else{
+                        Toast.makeText(this, "EXPORT UNSUCCESSFUL. MAKE SURE TO GIVE STORAGE ACCESS", Toast.LENGTH_LONG).show()
+                    }
+
+                }
+            },1000)
+
+
+        }
+    }
+
+    fun generateNoteOnSD(context: Context, sFileName: String) {
+        try {
+            val root=File( "/storage/emulated/0/Download/")
+            if (!root.exists()) {
+                root.mkdirs()
+            }
+            val gpxfile=File(root, sFileName)
+            val writer=FileWriter(gpxfile)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
+
+    private fun export() {
+
+        progressBar1!!.visibility = View.GONE
+
+        try {
+            db= DataBase(this)
+            val db=this.openOrCreateDatabase("summery.db", Context.MODE_PRIVATE, null)
+            val selectQuery=
+                " SELECT * FROM Summery"
+            val cursor=db.rawQuery(selectQuery, null)
+            var rowcount: Int
+            var colcount: Int
+
+            val saveFile=File("/sdcard/Download/Qtydata.txt")
+            val fw=FileWriter(saveFile)
+
+
+            val bw=BufferedWriter(fw)
+            rowcount=cursor.getCount()
+            colcount=cursor.getColumnCount()
+
+
+            if (rowcount>0) {
+
+                for (i in 0 until rowcount) {
+                    cursor!!.moveToPosition(i)
+
+                    for (j in 0 until colcount) {
+                        if (j == 0) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 1) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 2) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 3) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 4) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 5) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 6) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 7) {
+                            if(cursor.getString(j) == null)
+                            {
+                                bw.write("0,")
+                            }
+                            else {
+                                bw.write(cursor!!.getString(j) + ",")
+                            }
+
+                        }
+                        if (j == 8) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+                        if (j == 9) {
+
+                            bw.write(cursor!!.getString(j))
+
+                        }
+
+                    }
+                    bw.newLine()
+                }
+                bw.flush()
+
+            }
+
+            Toast.makeText(this,"EXPORT SUCCESSFUL",Toast.LENGTH_LONG).show()
+            dialog.dismiss()
+//            confirmDel()
+
+        }
+        catch (ex: Exception) {
+            ex.printStackTrace()
+
+        }
+
+    }
+
 
     private fun dialog(){
         val builder = AlertDialog.Builder(this)
