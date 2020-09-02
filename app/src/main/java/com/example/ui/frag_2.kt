@@ -15,36 +15,53 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.api_test.FileDownloadClient
+import com.example.ui.DataBasrHandler.DataBase
+import com.example.ui.DataBasrHandler.stockTakeID
+import com.example.ui.DataBasrHandler.storeCode
+import com.example.ui.DataBasrHandler.storeName
+import kotlinx.android.synthetic.main.fragment_2.*
+import kotlinx.android.synthetic.main.fragment_2.view.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.*
-var ip:String? = ""
+var ipa:String? = ""
 
 class Frag2(context: Context): Fragment(){
 
     internal lateinit var serverIp:TextView
     internal lateinit var btnDownload:Button
+    internal lateinit var db:DataBase
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        db = DataBase(context!!)
         val view:View = inflater.inflate(R.layout.fragment_2,container,false)
         loadIp()
+        db.getBu()
         serverIp = view.findViewById(R.id.ip)
         btnDownload = view.findViewById(R.id.btn_download)
 
-        serverIp.setText(ip)
+        serverIp.setText(ipa)
+        view.storename.setText(storeName)
+        view.storecode.setText(storeCode)
+        view.stocktakeid.setText(stockTakeID)
         btnDownload.setOnClickListener {
             AsyncTaskRunner(context).execute()
+//            db.getBu()
+//            view.storename.setText(storeName)
+//            view.storecode.setText(storeCode)
+//            view.stocktakeid.setText(stockTakeID)
         }
         return view
 
     }
+
 
     private class AsyncTaskRunner(val context: Context?) : AsyncTask<String, String, String>() {
         internal lateinit var pgd: ProgressDialog
@@ -52,7 +69,7 @@ class Frag2(context: Context): Fragment(){
         override fun doInBackground(vararg params: String?): String {
 
 
-            var builder = Retrofit.Builder().baseUrl("http://$ip:3000")
+            var builder = Retrofit.Builder().baseUrl("http://$ipa:3000")
             var retrofit = builder.build()
 
             var fileDownloadClient = retrofit.create(FileDownloadClient::class.java)
@@ -64,7 +81,7 @@ class Frag2(context: Context): Fragment(){
                     response: Response<ResponseBody?>
                 ) {
                     if (response.isSuccessful) {
-                        Toast.makeText(context,"Download Started!", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context,"Download Started!", Toast.LENGTH_SHORT).show()
                         object : AsyncTask<Void?, Void?, Void?>() {
                             override fun doInBackground(vararg params: Void?): Void? {
                                 writeResponseBodyToDisk(response.body())
@@ -161,7 +178,7 @@ class Frag2(context: Context): Fragment(){
 
         private fun loadIp() {
         var prefs = context?.getSharedPreferences("ip", Activity.MODE_PRIVATE)
-        ip = prefs?.getString("valIp", "")
+        ipa = prefs?.getString("valIp", "")
     }
 
 }

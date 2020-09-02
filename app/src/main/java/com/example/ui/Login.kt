@@ -23,6 +23,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.experimental.and
 
+var wifiMacAdds = ""
+var user = ""
 
 val seItem=ArrayList<File_list>()
 class Login : AppCompatActivity() {
@@ -82,6 +84,7 @@ class Login : AppCompatActivity() {
                 }
                else{
                     if(edt_user.text.toString() == username && edt_password.text.toString() == password){
+                        usr = edt_user.text.toString()
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
                     }
@@ -157,6 +160,7 @@ class Login : AppCompatActivity() {
                 for (idx in mac.indices) buf.append(String.format("%02X:", mac[idx]))
                 if (buf.length > 0) buf.deleteCharAt(buf.length - 1)
                 println("WIFI MAC : $buf")
+                wifiMacAdds = buf.toString().replace(":","")
                 return buf.toString()
             }
         } catch (ex: java.lang.Exception) {

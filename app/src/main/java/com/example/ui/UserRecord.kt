@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -20,16 +21,13 @@ import java.util.*
 
 
 var date_seq = 1
-var load_dateseq = 1
 var formatted = ""
 var loadDate = ""
-var checkseq = ""
 var Date =""
 var currentDate:kotlin.String = ""
 var currentDate1:kotlin.String = ""
 var doc_name:kotlin.String = ""
-var spinner_lc:kotlin.String = ""
-
+var storeid = ""
 var ck_activity = ""
 
 class UserRecord : AppCompatActivity() {
@@ -37,8 +35,6 @@ class UserRecord : AppCompatActivity() {
     internal lateinit var date_count:EditText
     internal lateinit var db:DataBase
     private var mac =""
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,30 +47,19 @@ class UserRecord : AppCompatActivity() {
 
         db = DataBase(this)
 //        db.getLocation()
+        db.getBu()
         date_count = findViewById(R.id.count_date)
+        inspector.setText(usr)
+        store.setText(storeName)
+        storecode.setText(storeCode)
+        stocktakeid.setText("COUNT ID : $stockTakeID")
+        storename.setText(storeName)
+
 //        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:a")
 //        val date_format1 = SimpleDateFormat("dd-MM-yyyy")
 
         val edtLocation  = findViewById<EditText>(R.id.edt_location)
-
-//        if (spinner != null) {
-//            val adapter = ArrayAdapter(this,
-//                android.R.layout.simple_spinner_item, Location)
-//            spinner.adapter = adapter
-//
-//            spinner.onItemSelectedListener = object :
-//                AdapterView.OnItemSelectedListener {
-//                override fun onItemSelected(parent: AdapterView<*>,
-//                                            view: View, position: Int, id: Long) {
-//                    Toast.makeText(this@UserRecord, "Selected item is "+ Location[position], Toast.LENGTH_SHORT).show()
-//                    spinner_lc = Location[position]
-//                }
-//
-//                override fun onNothingSelected(parent: AdapterView<*>) {
-//                    // write code to perform some action
-//                }
-//            }
-//        }
+        edtLocation.requestFocus()
 
         val sdf = SimpleDateFormat("hh:mma")
         val date_format = SimpleDateFormat("yyyymmdd")
@@ -113,42 +98,89 @@ class UserRecord : AppCompatActivity() {
         date_count.setText(currentDate1)
         println("Current Time"+currentTime)
 
+        edtLocation.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
 
-//        if(currentDate == loadDate){
-//            formatted = String.format("%03d", date_seq)
-//            doc_no.setText(currentDate+formatted)
-//            date_count.setText(currentDate1)
-//
-//        }
-//        else{
-//            load_dateseq = 1
-//            formatted = String.format("%03d", load_dateseq)
-//            doc_no.setText(currentDate+formatted)
-//            date_count.setText(currentDate1)
-//        }
+            if (event.keyCode == KeyEvent.KEYCODE_SPACE && event.action == KeyEvent.ACTION_UP || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
 
+                if(edtLocation.text.toString() == ""){
+                    Toast.makeText(this,"Please Enter Location",Toast.LENGTH_SHORT).show()
+                }
+
+                else{
+                    if(scanCheck == 0){
+                        insp = inspector.text.toString()
+                        location = edtLocation.text.toString()
+                        date = db_date
+                        time = currentTime
+                        println(date+" "+time)
+                        db.checkDate()
+                        var formatseq =  String.format("%04d", fileSeq)
+                        doc_name="S$wifiMacAdds$Date$formatseq"
+                        name = doc_name
+                        updateCheck = "no"
+                        db.addDate()
+                        val intent = Intent(this,Check_stock::class.java)
+                        startActivity(intent)
+                    }
+                    else{
+                        insp = inspector.text.toString()
+                        location = edtLocation.text.toString()
+                        date = db_date
+                        time = currentTime
+                        println(date+" "+time)
+                        updateCheck="no"
+                        db.checkDate()
+                        var formatseq =  String.format("%04d", fileSeq)
+                        doc_name="Q$wifiMacAdds$Date$formatseq"
+                        name = doc_name
+                        db.addDate()
+                        val intent = Intent(this,Check_stock_Multiscan::class.java)
+                        startActivity(intent)
+                    }
+
+                }
+            }
+
+            false
+
+        })
         btn_next.setOnClickListener{
 
-            if(store.text.toString()=="" || inspector.text.toString()=="")
+            if(edt_location.text.toString()=="")
             {
-                Toast.makeText(this,"Please Enter Store and Inspecor Name",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"Please Enter Location",Toast.LENGTH_SHORT).show()
             }
 
             else{
-                insp = inspector.text.toString()
-                location = edtLocation.text.toString()
-                createFile()
 
-                name = doc_name
-                date = db_date
-                time = currentTime
-                db.addDate()
 
                 if(scanCheck == 0){
+                    insp = inspector.text.toString()
+                    location = edtLocation.text.toString()
+                    date = db_date
+                    time = currentTime
+                    println(date+" "+time)
+                    db.checkDate()
+                    var formatseq =  String.format("%04d", fileSeq)
+                    doc_name="S$wifiMacAdds$Date$formatseq"
+                    name = doc_name
+                    updateCheck = "no"
+                    db.addDate()
                     val intent = Intent(this,Check_stock::class.java)
                     startActivity(intent)
                 }
                 else{
+                    insp = inspector.text.toString()
+                    location = edtLocation.text.toString()
+                    date = db_date
+                    time = currentTime
+                    println(date+" "+time)
+                    updateCheck="no"
+                    db.checkDate()
+                    var formatseq =  String.format("%04d", fileSeq)
+                    doc_name="Q$wifiMacAdds$Date$formatseq"
+                    name = doc_name
+                    db.addDate()
                     val intent = Intent(this,Check_stock_Multiscan::class.java)
                     startActivity(intent)
                 }
@@ -207,7 +239,7 @@ class UserRecord : AppCompatActivity() {
     }
 
     fun createFile(){
-        val root=File( "/storage/emulated/0/Stock Export/")
+        val root=File( "/sdcard/Stock Export")
         if (!root.exists()) {
             root.mkdirs()
         }
@@ -223,7 +255,7 @@ class UserRecord : AppCompatActivity() {
         var file_count = count
         var fileseq=1
         formatted = String.format("%03d", fileseq)
-        val filepath="/storage/emulated/0/Stock Export/$mac$Date$formatted.csv"
+        val filepath="/sdcard/Stock Export/$wifiMacAdds$Date$formatted.csv"
         var filename=File(filepath)
         var checkfile_seq = 0
 
@@ -233,24 +265,24 @@ class UserRecord : AppCompatActivity() {
             if(filename.exists()){
                 fileseq++
                 formatted = String.format("%03d", fileseq)
-                filename =File( "/storage/emulated/0/Stock Export/$mac$Date$formatted.csv")
+                filename =File( "/sdcard/Stock Export$wifiMacAdds$Date$formatted.csv")
                 println("Exists")
             }
 
             else{
-                generateNoteOnSD(this,"/$mac$Date$formatted.csv/")
-                doc_name = "$mac$Date$formatted.csv"
+                generateNoteOnSD(this,"/$wifiMacAdds$Date$formatted.csv/")
+                doc_name = "$wifiMacAdds$Date$formatted.csv"
                 val saveFile = File("/sdcard/Stock Export/$doc_name")
                 val fw = FileWriter(saveFile.absoluteFile, true)
                 val bw = BufferedWriter(fw)
-                val line = "DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime"
+                val line = "ROWID,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime"
                 val sb = StringBuilder()
                 var rest = 188 - line.length
                 sb.append(line)
                 for(i in 1..rest){
                     sb.append(" ")
                 }
-                bw.write(sb.toString() + "\r\n")
+//                bw.write(sb.toString() + "\r\n")
                 bw.flush()
                 checkfile_seq = 0
                 println("NEW")
@@ -264,7 +296,7 @@ class UserRecord : AppCompatActivity() {
 
     fun generateNoteOnSD(context: Context, sFileName: kotlin.String) {
         try {
-            val root=File( "/storage/emulated/0/Stock Export/")
+            val root=File( "/sdcard/Stock Export")
             if (!root.exists()) {
                 root.mkdirs()
             }

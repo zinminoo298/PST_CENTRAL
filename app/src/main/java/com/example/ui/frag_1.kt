@@ -14,10 +14,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.ui.Adapters.File_Adapter
+import com.example.ui.DataBasrHandler.DataBase
+import com.example.ui.DataBasrHandler.fileCount
+import com.example.ui.DataBasrHandler.fileSaved
+import com.example.ui.Modle.FileDetail
 import com.example.ui.Modle.File_list
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.fragment_1.*
+import kotlinx.android.synthetic.main.fragment_1.view.*
+import org.w3c.dom.Text
 
 var scanCheck = 0
+internal lateinit var txt1:TextView
+internal lateinit var txt2:TextView
 
 class Frag1: Fragment(){
 
@@ -33,7 +42,8 @@ class Frag1: Fragment(){
     var isOpen = false
 
     private var mcontext: Context? = null
-    internal var seItem: MutableList<File_list> = ArrayList<File_list>()
+    internal var stItem: MutableList<FileDetail> = ArrayList<FileDetail>()
+    internal lateinit var db:DataBase
 
     override fun onAttach(activity: Activity) {
         // TODO Auto-generated method stub
@@ -51,8 +61,16 @@ class Frag1: Fragment(){
 
         val view:View = inflater.inflate(R.layout.fragment_1,container,false)
         val listview = view.findViewById<ListView>(R.id.lv)
-        val adapter=File_Adapter( mcontext!!)
+        val adapter=File_Adapter(stItem, mcontext!!)
+        val db = DataBase(mcontext!!)
+//        db.getFileDetail
         listview.adapter=adapter
+        adapter.refresh(db.getFileDetail)
+        txt1 = view.findViewById(R.id.total_lc)
+        txt2 = view.findViewById(R.id.totalsaved)
+
+        view.total_lc.setText(fileCount.toString())
+        view.totalsaved.setText(fileSaved.toString())
 
         fab_main = view.findViewById(R.id.fab);
         fab1_single = view.findViewById(R.id.fab1);
@@ -92,6 +110,7 @@ class Frag1: Fragment(){
             scanCheck = 1
             val intent = Intent(mcontext,UserRecord::class.java)
             startActivity(intent)
+//            Toast.makeText(context,"Under Development",Toast.LENGTH_SHORT).show()
         }
 
         fab1_single.setOnClickListener {
@@ -105,5 +124,5 @@ class Frag1: Fragment(){
 
 
 
-    }
+}
 

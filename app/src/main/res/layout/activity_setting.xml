@@ -130,6 +130,7 @@
 
             <EditText
                 android:id="@+id/wifi_mac"
+                android:focusable="false"
                 android:layout_width="match_parent"
                 android:textSize="12dp"
                 android:layout_height="33dp">

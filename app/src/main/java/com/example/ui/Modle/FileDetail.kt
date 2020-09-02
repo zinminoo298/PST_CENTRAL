@@ -7,6 +7,8 @@ class FileDetail{
     var file_date:String = ""
     var file_time:String = ""
     var file_summery:String = ""
+    var file_status:String = ""
+    var file_qty:String=""
 
     constructor()
 //    constructor(

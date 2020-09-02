@@ -19,8 +19,8 @@
     <item
         android:id="@+id/action_clear"
         android:enabled="true"
-        android:title="Save"
-        android:icon="@drawable/clear"
+        android:title="Export"
+        android:icon="@drawable/save"
         app:showAsAction="ifRoom"/>
 
 </menu>

@@ -33,8 +33,8 @@ class Setting : AppCompatActivity() {
         wifiMac = findViewById(R.id.wifi_mac)
         btnSave = findViewById(R.id.btn_save)
 
-        masterIp.setText(ip)
-        wifiMac.setText(mac)
+        masterIp.setText(ipa)
+        wifiMac.setText(wifiMacAdds)
 
         btnSave.setOnClickListener {
             setIp(masterIp.text.toString())
@@ -94,7 +94,7 @@ class Setting : AppCompatActivity() {
 
     private fun loadIp() {
         var prefs = getSharedPreferences("ip", Activity.MODE_PRIVATE)
-        ip = prefs.getString("valIp", "").toString()
+        ipa = prefs.getString("valIp", "").toString()
     }
 
     private fun setMac(v: String) {

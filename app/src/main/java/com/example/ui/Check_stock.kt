@@ -8,20 +8,30 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import com.example.ui.DataBasrHandler.*
 import com.example.ui.Modle.File_list
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.check_stock.*
+import kotlinx.android.synthetic.main.check_stock.storename
+import kotlinx.android.synthetic.main.check_stock.storecode
+import kotlinx.android.synthetic.main.fragment_2.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+var requestBack = 0
 
 class Check_stock : AppCompatActivity() {
 
@@ -33,6 +43,9 @@ class Check_stock : AppCompatActivity() {
     internal lateinit var edt_desc:EditText
     internal lateinit var btn_save:Button
     internal lateinit var btn_cancel:Button
+    internal lateinit var mTopToolbar: Toolbar
+    internal lateinit var imgComplete:ImageView
+    internal lateinit var imgImcomplete:ImageView
 
     private var progressBar1: ProgressBar? =null
     internal lateinit var dialog: AlertDialog
@@ -43,63 +56,119 @@ class Check_stock : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.check_stock)
 
+        imgComplete = findViewById(R.id.complete)
+        imgImcomplete = findViewById(R.id.imcomplete)
+
+        if(updateCheck == "no"){
+            imgComplete.visibility = GONE
+            imgImcomplete.visibility = VISIBLE
+        }
+        else{
+            imgImcomplete.visibility = GONE
+            imgComplete.visibility = VISIBLE
+        }
+
+        mTopToolbar = findViewById(R.id.my_toolbar)
+        setSupportActionBar(mTopToolbar)
+
+        filename = doc_name
+        txt_sku_qty.setText("")
+        txt_lc_qty.setText("")
+        txt_pdName.setText("")
+        txt_cost.setText("")
+        txt_pack.setText("")
+        txt_status.setText("")
+        txt_stock.setText("")
+        txt_sku_name.setText("")
+        total_am.setText("")
+
         val Lock:ImageView
         val Unlock:ImageView
 
         db = DataBase(this)
-
-        Lock = findViewById(R.id.lock)
-        Unlock = findViewById(R.id.unlock)
+        db.getBu()
+        storename.setText(storeName)
+        storecode.setText(storeCode)
+        countid.setText("STOCK TAKE ID : "+stockTakeID)
+//
+//        Lock = findViewById(R.id.lock)
+//        Unlock = findViewById(R.id.unlock)
         scan_qty.isFocusable = false
 
-        Lock.setOnClickListener {
-            scan_qty.isFocusable  = true
-            scan_qty.isFocusableInTouchMode = true
-            scan_qty.requestFocus()
-            Lock.visibility = GONE
-            Unlock.visibility = View.VISIBLE
-        }
-
-        Unlock.setOnClickListener {
-            scan_qty.isFocusable = false
-            scan_qty.isFocusableInTouchMode = false
-            Lock.visibility = View.VISIBLE
-            Unlock.visibility = GONE
-        }
+//        Lock.setOnClickListener {
+//            scan_qty.isFocusable  = true
+//            scan_qty.isFocusableInTouchMode = true
+//            scan_qty.requestFocus()
+//            Lock.visibility = GONE
+//            Unlock.visibility = View.VISIBLE
+//        }
+//
+//        Unlock.setOnClickListener {
+//            scan_qty.isFocusable = false
+//            scan_qty.isFocusableInTouchMode = false
+//            Lock.visibility = View.VISIBLE
+//            Unlock.visibility = GONE
+//        }
 
         /*Bottom Nav Bar actions*/
-        val bottomnavigationview: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        bottomnavigationview.setOnNavigationItemSelectedListener { menuItem ->
-
-            when (menuItem.itemId) {
-                R.id.action_clear -> {
-                    exportDialog(R.style.DialogSlide,this)
-
-                }
-
-                R.id.action_edit -> {
-                    val intent = Intent(this,Edit_stock::class.java)
-                    startActivity(intent)
-                }
-
-                R.id.action_back -> {
-
-                }
-
-            }
-            true
-
-        }
-
-
-//        view_data.setOnClickListener{
-//            filename = txt_doc.text.toString()
-//            val intent = Intent(this,ViewStock::class.java)
-//            startActivity(intent)
+//        val bottomnavigationview: BottomNavigationView = findViewById(R.id.bottom_navigation)
+//        bottomnavigationview.setOnNavigationItemSelectedListener { menuItem ->
+//
+//            when (menuItem.itemId) {
+//                R.id.action_clear -> {
+//                    exportDialog(R.style.DialogSlide,this)
+//
+//                }
+//
+//                R.id.action_edit -> {
+//                    val intent = Intent(this,Edit_stock::class.java)
+//                    startActivity(intent)
+//                }
+//
+//                R.id.action_back -> {
+//                    if(ck_activity == "0"){
+//                        val a=Intent(this, ViewStock::class.java)
+//                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                        startActivity(a)
+//                    }
+//                    else{
+//                        val a=Intent(this, UserRecord::class.java)
+//                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                        startActivity(a)
+//                    }                }
+//
+//            }
+//            true
+//
 //        }
 
         txt_doc.setText(doc_name)
         txt_lc.setText(location)
+
+        scan_bc.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                if(scan_bc.text.toString() == ""){
+                    Toast.makeText(this,"Please Enter SKU",Toast.LENGTH_SHORT).show()
+                    scan_bc.setText("")
+                }
+
+                else{
+                    sku = scan_bc.text.toString()
+                    qty =scan_qty.text.toString()
+                    filename = txt_doc.text.toString()
+                    updateCheck = "no"
+                    db.checkItem1()
+                    scan_bc.setText("")
+                    scan_bc.requestFocus()
+                    imgComplete.visibility = View.GONE
+                    imgImcomplete.visibility = View.VISIBLE
+                }
+            }
+
+            false
+
+        })
 
         scan_bc.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
 
@@ -111,57 +180,26 @@ class Check_stock : AppCompatActivity() {
                 }
 
                 else{
-                    sku =   scan_bc.text.toString()
-                    qty =Integer.parseInt(scan_qty.text.toString())
+                    sku = scan_bc.text.toString()
+                    qty =scan_qty.text.toString()
                     filename = txt_doc.text.toString()
-                    db.checkDatabase()
-//                    if(ck_item == 0){
-////                        Toast.makeText(this,"DATA NOT FOUND",Toast.LENGTH_SHORT).show()
-//                        dialog()
-//                        scan_bc.setText("")
-//
-//
-//                    }
-//                    else{
-//                        db.addItem()
-//
-//                        db.viewData()
-//                        if(check == 0){
-//                            txt_sku_qty.setText(sku_qty)
-//                            txt_lc_qty.setText(lc_qty)
-//                            txt_pdName.setText(newitem)
-//                            txt_cost.setText("")
-//                            txt_pack.setText("")
-//                            txt_status.setText("")
-//                            txt_stock.setText("")
-//                            txt_sku_name.setText(scan_bc.text.toString())
-//                            total_am.setText(lc_value)
-//                        }
-//                        else{
-                            txt_sku_qty.setText(sku_qty)
-                            txt_lc_qty.setText(lc_qty)
-                            txt_pdName.setText(pdName)
-                            txt_cost.setText(cost.toString())
-                            txt_pack.setText(packSz.toString())
-                            txt_status.setText(status)
-                            txt_stock.setText(stock.toString())
-                            txt_sku_name.setText(scan_bc.text.toString())
-                            total_am.setText(lc_value)
-//                        }
-//
-//                        getTime()
-//                        val line = "$doc_name,$insp,$location,${scan_bc.text.toString()},$pdName,$cost,${scan_qty.text.toString()},$formatted_date"
-//                        val sb = StringBuilder()
-//                        var rest = 188 - line.length
-//                        sb.append(line)
-//                        for(i in 1..rest){
-//                            sb.append(" ")
-//                        }
-//                        println(sb.toString())
-//                        writeToFile(line,this)
-//
-//                        Toast.makeText(this, "Scan Completed", Toast.LENGTH_SHORT).show()
-//                        scan_bc.setText("")
+                    updateCheck = "no"
+                    db.checkItem1()
+
+                    txt_sku_qty.setText(sku_qty)
+                    txt_lc_qty.setText(lc_qty)
+                    txt_pdName.setText(pdName)
+                    txt_cost.setText(cost.toString())
+                    txt_pack.setText(packSz.toString())
+                    txt_status.setText(status)
+                    txt_stock.setText(stock.toString())
+                    txt_sku_name.setText(scan_bc.text.toString())
+                    total_am.setText(lc_value)
+                    scan_bc.setText("")
+                    scan_bc.requestFocus()
+
+                    imgComplete.visibility = View.GONE
+                    imgImcomplete.visibility = View.VISIBLE
 //                    }
 
                 }
@@ -171,6 +209,7 @@ class Check_stock : AppCompatActivity() {
 
         })
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun readFromFile() {
@@ -289,7 +328,7 @@ class Check_stock : AppCompatActivity() {
         builder.setView(view)
         dialog=builder.create()
         dialog.window?.attributes?.windowAnimations=type
-        dialog.setMessage("THE DATA WILL BE EXPORTED TO Downloads/Qtydata.txt")
+        dialog.setMessage("THE DATA WILL BE EXPORTED TO sdcard/Stock Export")
         progressBar1 = view.findViewById(R.id.progress_bar)
         progressBar1!!.visibility = View.GONE
         dialog.show()
@@ -300,7 +339,7 @@ class Check_stock : AppCompatActivity() {
 
             Handler().postDelayed({
 
-                val filepath="/storage/emulated/0/Download/Qtydata.txt"
+                val filepath="/sdcard/Stock Export/$doc_name.csv"
                 val file=File(filepath)
                 if(file.exists())
                 {
@@ -309,7 +348,7 @@ class Check_stock : AppCompatActivity() {
 
                 }
                 else{
-                    generateNoteOnSD(this,"/Qtydata.txt/")
+                    generateNoteOnSD(this,"/$doc_name.csv")
                     if(file.exists())
                     {
                         export()
@@ -329,7 +368,7 @@ class Check_stock : AppCompatActivity() {
 
     fun generateNoteOnSD(context: Context, sFileName: String) {
         try {
-            val root=File( "/storage/emulated/0/Download/")
+            val root=File( "/sdcard/Stock Export")
             if (!root.exists()) {
                 root.mkdirs()
             }
@@ -347,21 +386,23 @@ class Check_stock : AppCompatActivity() {
 
         try {
             db= DataBase(this)
-            val db=this.openOrCreateDatabase("summery.db", Context.MODE_PRIVATE, null)
+            val database=this.openOrCreateDatabase("summery.db", Context.MODE_PRIVATE, null)
             val selectQuery=
-                " SELECT * FROM Summery"
-            val cursor=db.rawQuery(selectQuery, null)
+                " SELECT Seq,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime,SKU,IBC,SBC FROM Summery WHERE DocNum='$doc_name'"
+            val cursor=database.rawQuery(selectQuery, null)
             var rowcount: Int
             var colcount: Int
 
-            val saveFile=File("/sdcard/Download/Qtydata.txt")
+            println(doc_name)
+            val saveFile=File("/sdcard/Stock Export/$doc_name.csv")
             val fw=FileWriter(saveFile)
 
-
+            var k = 1
             val bw=BufferedWriter(fw)
             rowcount=cursor.getCount()
             colcount=cursor.getColumnCount()
-
+            bw.write("rowid,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime,SKU,IBC,SBC")
+            bw.newLine()
 
             if (rowcount>0) {
 
@@ -370,8 +411,8 @@ class Check_stock : AppCompatActivity() {
 
                     for (j in 0 until colcount) {
                         if (j == 0) {
-
-                            bw.write(cursor!!.getString(j)+",")
+                            val formatted = java.lang.String.format("%04d", k)
+                            bw.write("$formatted,")
 
                         }
                         if (j == 1) {
@@ -405,6 +446,11 @@ class Check_stock : AppCompatActivity() {
 
                         }
                         if (j == 7) {
+
+                            bw.write(cursor!!.getString(j)+",")
+                        }
+                        if (j == 8) {
+
                             if(cursor.getString(j) == null)
                             {
                                 bw.write("0,")
@@ -414,26 +460,61 @@ class Check_stock : AppCompatActivity() {
                             }
 
                         }
-                        if (j == 8) {
+                        if (j == 9) {
 
                             bw.write(cursor!!.getString(j)+",")
 
                         }
-                        if (j == 9) {
+                        if (j == 10) {
 
-                            bw.write(cursor!!.getString(j))
+                            bw.write(cursor!!.getString(j)+",")
 
                         }
 
+                        if (j == 11) {
+
+                            bw.write(cursor!!.getString(j)+",")
+
+                        }
+
+                        if (j == 12) {
+                            if(cursor.getString(j) == null)
+                            {
+                                bw.write("null")
+                            }
+                            else {
+                                bw.write(cursor!!.getString(j))
+                            }                        }
                     }
                     bw.newLine()
+                    k++
                 }
                 bw.flush()
 
             }
-
+            updateCheck = "yes"
+            db.updateStatus()
             Toast.makeText(this,"EXPORT SUCCESSFUL",Toast.LENGTH_LONG).show()
             dialog.dismiss()
+            database.close()
+            imgImcomplete.visibility = GONE
+            imgComplete.visibility = VISIBLE
+
+            if(requestBack == 1){
+                if(ck_activity == "0"){
+                    val a=Intent(this, ViewStock::class.java)
+                    a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(a)
+                }
+                else{
+                    val a=Intent(this, UserRecord::class.java)
+                    a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(a)
+                }
+            }
+            else{
+
+            }
 //            confirmDel()
 
         }
@@ -443,6 +524,7 @@ class Check_stock : AppCompatActivity() {
         }
 
     }
+
 
 
     private fun dialog(){
@@ -496,19 +578,55 @@ class Check_stock : AppCompatActivity() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemid = item.itemId
+
+        if (itemid == R.id.action_edit) {
+
+            db.getItem()
+            if(itemDetail == " , , , , , , , , , , , ,"){
+                Toast.makeText(this,"No Scanned Data",Toast.LENGTH_SHORT).show()
+            }
+            else{
+                val intent = Intent(this,Edit_stock::class.java)
+                startActivity(intent)
+            }
+            return true
+        }
+
+        if (itemid == R.id.action_save) {
+            exportDialog(R.style.DialogSlide,this)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
     override fun onBackPressed() {
 
-        if(ck_activity == "0"){
-            val a=Intent(this, ViewStock::class.java)
-            a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(a)
-        }
-        else{
-            val a=Intent(this, UserRecord::class.java)
-            a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(a)
+        if(updateCheck == "no"){
+            requestBack = 1
+            exportDialog(R.style.DialogSlide,this)
         }
 
-        super.onBackPressed()
+        else{
+            requestBack =0
+            if(ck_activity == "0"){
+                val a=Intent(this, ViewStock::class.java)
+                a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(a)
+            }
+            else{
+                val a=Intent(this, UserRecord::class.java)
+                a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(a)
+            }
+            super.onBackPressed()
+        }
     }
 }

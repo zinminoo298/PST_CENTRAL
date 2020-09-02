@@ -50,7 +50,7 @@ class Frag3: Fragment(){
         btnUpload = view.findViewById(R.id.btn_upload)
         txtSavedFiles = view.findViewById(R.id.saved_files)
         loadIp()
-        serverIp.setText(ip)
+        serverIp.setText(ipa)
         fileCount()
 
 //        println(fileList.size)
@@ -58,7 +58,7 @@ class Frag3: Fragment(){
 
         btnUpload.setOnClickListener {
             val file = File("/sdcard/Download/test_test.csv")
-            AsyncTaskRunner(file,context).execute()
+//            AsyncTaskRunner(file,context).execute()
         }
 
         return view
@@ -99,7 +99,7 @@ class Frag3: Fragment(){
         override fun doInBackground(vararg params: String?): String {
 
             for(i in 0..fileList.size-1){
-                var builder = Retrofit.Builder().baseUrl("http://$ip:3000")
+                var builder = Retrofit.Builder().baseUrl("http://$ipa:3000")
                 var retrofit = builder.build()
                 var fileDownloadClient = retrofit.create(FileDownloadClient::class.java)
                 val uri = Uri.fromFile(File("/sdcard/Stock Export/${fileList[i]}"))
@@ -181,6 +181,6 @@ class Frag3: Fragment(){
 
     private fun loadIp() {
         var prefs = context?.getSharedPreferences("ip", Activity.MODE_PRIVATE)
-        ip = prefs?.getString("valIp", "")
+        ipa = prefs?.getString("valIp", "")
     }
 }

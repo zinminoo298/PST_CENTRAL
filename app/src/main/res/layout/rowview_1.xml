@@ -40,12 +40,22 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.95"></View>
+                android:layout_weight="0.9"></View>
             <ImageView
+                android:id="@+id/complete"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_weight="0.05"
                 android:background="@drawable/completed"
+                android:layout_gravity="center">
+            </ImageView>
+
+            <ImageView
+                android:id="@+id/imcomplete"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_weight="0.05"
+                android:background="@drawable/imcomplete"
                 android:layout_gravity="center">
             </ImageView>
         </LinearLayout>

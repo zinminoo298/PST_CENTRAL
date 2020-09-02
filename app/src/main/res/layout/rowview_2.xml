@@ -44,26 +44,26 @@
         android:textColor="#FF3366">
     </TextView>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.05"
-        android:weightSum="1"
-        android:orientation="horizontal"
-        >
-        <ImageView
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_weight="0.05"
-            android:background="@drawable/completed"
-            android:layout_gravity="center">
-        </ImageView>
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.95"></View>
+<!--    <LinearLayout-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_weight="0.05"-->
+<!--        android:weightSum="1"-->
+<!--        android:orientation="horizontal"-->
+<!--        >-->
+<!--        <ImageView-->
+<!--            android:layout_width="10dp"-->
+<!--            android:layout_height="10dp"-->
+<!--            android:layout_weight="0.05"-->
+<!--            android:background="@drawable/completed"-->
+<!--            android:layout_gravity="center">-->
+<!--        </ImageView>-->
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.95"></View>-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
 
 
