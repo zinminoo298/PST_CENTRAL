@@ -146,9 +146,30 @@ class Check_stock_Multiscan : AppCompatActivity() {
                 }
 
                 else{
-                    scan_qty.setText("1")
-                    scan_qty.requestFocus()
-                    scan_qty.setSelectAllOnFocus(true)
+                    sku = scan_bc.text.toString()
+                    db.showDetail()
+                    if(ck == 1){
+                        txt_sku_qty.setText(sku_qty)
+                        txt_lc_qty.setText("")
+                        txt_pdName.setText(pdName)
+                        txt_cost.setText(cost.toString())
+                        txt_pack.setText(packSz.toString())
+                        txt_status.setText(status)
+                        txt_stock.setText(stock.toString())
+                        txt_sku_name.setText(scan_bc.text.toString())
+                        total_am.setText("")
+
+//                        scan_bc.setText("")
+                        scan_qty.setText("1")
+                        scan_qty.requestFocus()
+                        scan_qty.setSelectAllOnFocus(true)
+                    }
+
+                    else{
+                        Toast.makeText(this,"Not Found",Toast.LENGTH_SHORT).show()
+                        scan_bc.setText("")
+                        scan_bc.requestFocus()
+                    }
                 }
             }
 
@@ -165,9 +186,30 @@ class Check_stock_Multiscan : AppCompatActivity() {
                 }
 
                 else{
-                    scan_qty.setText("1")
-                    scan_qty.requestFocus()
-                    scan_qty.setSelectAllOnFocus(true)
+                    sku = scan_bc.text.toString()
+                    db.showDetail()
+                    if(ck == 1){
+                        txt_sku_qty.setText(sku_qty)
+                        txt_lc_qty.setText("")
+                        txt_pdName.setText(pdName)
+                        txt_cost.setText(cost.toString())
+                        txt_pack.setText(packSz.toString())
+                        txt_status.setText(status)
+                        txt_stock.setText(stock.toString())
+                        txt_sku_name.setText(scan_bc.text.toString())
+                        total_am.setText("")
+
+//                        scan_bc.setText("")
+                        scan_qty.setText("1")
+                        scan_qty.requestFocus()
+                        scan_qty.setSelectAllOnFocus(true)
+                    }
+
+                    else{
+                        Toast.makeText(this,"Not Found",Toast.LENGTH_SHORT).show()
+                        scan_bc.setText("")
+                        scan_bc.requestFocus()
+                    }
                 }
             }
 
@@ -176,12 +218,12 @@ class Check_stock_Multiscan : AppCompatActivity() {
         })
 
 
-    scan_qty.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+        scan_qty.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
 
             if (event.keyCode == KeyEvent.KEYCODE_SPACE && event.action == KeyEvent.ACTION_UP || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
 
                 if(scan_bc.text.toString() == ""){
-                    Toast.makeText(this,"Please Enter SKU",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Please Enter BARCODE",Toast.LENGTH_SHORT).show()
                     scan_bc.setText("")
                 }
 
@@ -203,7 +245,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                     total_am.setText(lc_value)
 
                     scan_bc.setText("")
-                    scan_qty.setText("")
+                    scan_qty.setText("1")
                     scan_bc.requestFocus()
                     imgComplete.visibility = View.GONE
                     imgImcomplete.visibility = View.VISIBLE
@@ -393,7 +435,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
             db= DataBase(this)
             val database=this.openOrCreateDatabase("summery.db", Context.MODE_PRIVATE, null)
             val selectQuery=
-                " SELECT Seq,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime,SKU,IBC,SBC FROM Summery WHERE DocNum='$doc_name'"
+                " SELECT Seq,StockTakeID,DocNum,Inspector,Seq,Location,SKU,Barcode,IBC,SBC,ProductName,QNT,SalePrice,DateTime FROM Summery WHERE DocNum='$doc_name'"
             val cursor=database.rawQuery(selectQuery, null)
             var rowcount: Int
             var colcount: Int
@@ -406,7 +448,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
             val bw=BufferedWriter(fw)
             rowcount=cursor.getCount()
             colcount=cursor.getColumnCount()
-            bw.write("rowid,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime,SKU,IBC,SBC")
+            bw.write("rowid,StockTakeID,DocNum,Inspector,SEQ,Location,SKU,BARCODE,IBC,SBC,ProductName,QNT,SalePrice,DateTime")
             bw.newLine()
 
             if (rowcount>0) {
@@ -456,9 +498,9 @@ class Check_stock_Multiscan : AppCompatActivity() {
                         }
                         if (j == 8) {
 
-                            if(cursor.getString(j) == null)
+                            if(cursor.getString(j) == null || cursor.getString(j) == "")
                             {
-                                bw.write("0,")
+                                bw.write(",")
                             }
                             else {
                                 bw.write(cursor!!.getString(j) + ",")
@@ -467,7 +509,13 @@ class Check_stock_Multiscan : AppCompatActivity() {
                         }
                         if (j == 9) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            if(cursor.getString(j) == null || cursor.getString(j) == "")
+                            {
+                                bw.write(",")
+                            }
+                            else {
+                                bw.write(cursor!!.getString(j) + ",")
+                            }
 
                         }
                         if (j == 10) {
@@ -478,18 +526,22 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
                         if (j == 11) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            if(cursor.getString(j) == null || cursor.getString(j) == "")
+                            {
+                                bw.write(",")
+                            }
+                            else {
+                                bw.write(cursor!!.getString(j)+",")
+                            }
 
                         }
 
                         if (j == 12) {
-                            if(cursor.getString(j) == null)
-                            {
-                                bw.write("null")
-                            }
-                            else {
-                                bw.write(cursor!!.getString(j))
-                            }
+                            bw.write(cursor!!.getString(j)+",")
+                        }
+
+                        if (j == 13) {
+                            bw.write(cursor!!.getString(j))
                         }
                     }
                     bw.newLine()

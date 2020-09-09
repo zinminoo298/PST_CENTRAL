@@ -275,6 +275,7 @@
                 android:background="@drawable/edit_text_from"
                 android:gravity="center"
                 android:text="1"
+                android:maxLength="8"
                 android:inputType="numberDecimal"
                 android:textColor="#FFFFFF"
                 android:selectAllOnFocus="true"

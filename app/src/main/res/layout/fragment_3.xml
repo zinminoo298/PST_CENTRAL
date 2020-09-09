@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.2"
-                android:text="30"
+                android:text=""
                 android:textColor="#FFFFFF"
                 android:textSize="40dp"
                 android:gravity="center"></TextView>
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.2"
-                android:text="03/07/20"
+                android:text=""
                 android:textColor="#FFFFFF"
                 android:textSize="38dp"
                 android:gravity="center"></TextView>

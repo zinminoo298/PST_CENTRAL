@@ -15,10 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.api_test.FileDownloadClient
-import com.example.ui.DataBasrHandler.DataBase
-import com.example.ui.DataBasrHandler.stockTakeID
-import com.example.ui.DataBasrHandler.storeCode
-import com.example.ui.DataBasrHandler.storeName
+import com.example.ui.DataBasrHandler.*
 import kotlinx.android.synthetic.main.fragment_2.*
 import kotlinx.android.synthetic.main.fragment_2.view.*
 import okhttp3.ResponseBody
@@ -51,8 +48,17 @@ class Frag2(context: Context): Fragment(){
         view.storename.setText(storeName)
         view.storecode.setText(storeCode)
         view.stocktakeid.setText(stockTakeID)
+        view.items.setText(totalItems.toString())
         btnDownload.setOnClickListener {
-            AsyncTaskRunner(context).execute()
+
+            println("IP"+serverIp.text.toString())
+            if(serverIp.text.toString() == "" || serverIp.text.toString() == null){
+                Toast.makeText(context,"Please enter correct IpAddress",Toast.LENGTH_SHORT).show()
+            }
+            else{
+                AsyncTaskRunner(context).execute()
+            }
+
 //            db.getBu()
 //            view.storename.setText(storeName)
 //            view.storecode.setText(storeCode)

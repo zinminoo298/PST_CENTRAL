@@ -18,14 +18,11 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import com.example.ui.DataBasrHandler.*
 import com.example.ui.Modle.File_list
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.check_stock.*
 import kotlinx.android.synthetic.main.check_stock.storename
 import kotlinx.android.synthetic.main.check_stock.storecode
-import kotlinx.android.synthetic.main.fragment_2.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -157,12 +154,39 @@ class Check_stock : AppCompatActivity() {
                     sku = scan_bc.text.toString()
                     qty =scan_qty.text.toString()
                     filename = txt_doc.text.toString()
-                    updateCheck = "no"
                     db.checkItem1()
-                    scan_bc.setText("")
-                    scan_bc.requestFocus()
-                    imgComplete.visibility = View.GONE
-                    imgImcomplete.visibility = View.VISIBLE
+
+                    if(ckItem == 1){
+                        txt_sku_qty.setText(sku_qty)
+                        txt_lc_qty.setText(lc_qty)
+                        txt_pdName.setText(pdName)
+                        txt_cost.setText(cost.toString())
+                        txt_pack.setText(packSz.toString())
+                        txt_status.setText(status)
+                        txt_stock.setText(stock.toString())
+                        txt_sku_name.setText(scan_bc.text.toString())
+                        total_am.setText(lc_value)
+                        scan_bc.setText("")
+                        scan_bc.requestFocus()
+
+                        imgComplete.visibility = View.GONE
+                        imgImcomplete.visibility = View.VISIBLE
+                    }
+                    else{
+                        txt_sku_qty.setText("")
+                        txt_lc_qty.setText("")
+                        txt_pdName.setText("")
+                        txt_cost.setText("")
+                        txt_pack.setText("")
+                        txt_status.setText("")
+                        txt_stock.setText("")
+                        txt_sku_name.setText(scan_bc.text.toString())
+                        total_am.setText("")
+                        scan_bc.setText("")
+                        scan_bc.requestFocus()
+                        Toast.makeText(this,"Barcode Not Found",Toast.LENGTH_SHORT).show()
+
+                    }
                 }
             }
 
@@ -186,20 +210,37 @@ class Check_stock : AppCompatActivity() {
                     updateCheck = "no"
                     db.checkItem1()
 
-                    txt_sku_qty.setText(sku_qty)
-                    txt_lc_qty.setText(lc_qty)
-                    txt_pdName.setText(pdName)
-                    txt_cost.setText(cost.toString())
-                    txt_pack.setText(packSz.toString())
-                    txt_status.setText(status)
-                    txt_stock.setText(stock.toString())
-                    txt_sku_name.setText(scan_bc.text.toString())
-                    total_am.setText(lc_value)
-                    scan_bc.setText("")
-                    scan_bc.requestFocus()
+                    if(ckItem == 1){
+                        txt_sku_qty.setText(sku_qty)
+                        txt_lc_qty.setText(lc_qty)
+                        txt_pdName.setText(pdName)
+                        txt_cost.setText(cost.toString())
+                        txt_pack.setText(packSz.toString())
+                        txt_status.setText(status)
+                        txt_stock.setText(stock.toString())
+                        txt_sku_name.setText(scan_bc.text.toString())
+                        total_am.setText(lc_value)
+                        scan_bc.setText("")
+                        scan_bc.requestFocus()
 
-                    imgComplete.visibility = View.GONE
-                    imgImcomplete.visibility = View.VISIBLE
+                        imgComplete.visibility = View.GONE
+                        imgImcomplete.visibility = View.VISIBLE
+                    }
+                    else{
+                        txt_sku_qty.setText("")
+                        txt_lc_qty.setText("")
+                        txt_pdName.setText("")
+                        txt_cost.setText("")
+                        txt_pack.setText("")
+                        txt_status.setText("")
+                        txt_stock.setText("")
+                        txt_sku_name.setText(scan_bc.text.toString())
+                        total_am.setText("")
+                        scan_bc.setText("")
+                        scan_bc.requestFocus()
+                        Toast.makeText(this,"Barcode Not Found",Toast.LENGTH_SHORT).show()
+                    }
+
 //                    }
 
                 }
@@ -388,7 +429,7 @@ class Check_stock : AppCompatActivity() {
             db= DataBase(this)
             val database=this.openOrCreateDatabase("summery.db", Context.MODE_PRIVATE, null)
             val selectQuery=
-                " SELECT Seq,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime,SKU,IBC,SBC FROM Summery WHERE DocNum='$doc_name'"
+                " SELECT Seq,StockTakeID,DocNum,Inspector,Seq,Location,SKU,Barcode,IBC,SBC,ProductName,QNT,SalePrice,DateTime FROM Summery WHERE DocNum='$doc_name'"
             val cursor=database.rawQuery(selectQuery, null)
             var rowcount: Int
             var colcount: Int
@@ -401,7 +442,7 @@ class Check_stock : AppCompatActivity() {
             val bw=BufferedWriter(fw)
             rowcount=cursor.getCount()
             colcount=cursor.getColumnCount()
-            bw.write("rowid,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime,SKU,IBC,SBC")
+            bw.write("rowid,StockTakeID,DocNum,Inspector,SEQ,Location,SKU,BARCODE,IBC,SBC,ProductName,QNT,SalePrice,DateTime")
             bw.newLine()
 
             if (rowcount>0) {
@@ -451,9 +492,9 @@ class Check_stock : AppCompatActivity() {
                         }
                         if (j == 8) {
 
-                            if(cursor.getString(j) == null)
+                            if(cursor.getString(j) == null || cursor.getString(j) == "")
                             {
-                                bw.write("0,")
+                                bw.write(",")
                             }
                             else {
                                 bw.write(cursor!!.getString(j) + ",")
@@ -462,7 +503,13 @@ class Check_stock : AppCompatActivity() {
                         }
                         if (j == 9) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            if(cursor.getString(j) == null || cursor.getString(j) == "")
+                            {
+                                bw.write(",")
+                            }
+                            else {
+                                bw.write(cursor!!.getString(j) + ",")
+                            }
 
                         }
                         if (j == 10) {
@@ -473,18 +520,23 @@ class Check_stock : AppCompatActivity() {
 
                         if (j == 11) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            if(cursor.getString(j) == null || cursor.getString(j) == "")
+                            {
+                                bw.write(",")
+                            }
+                            else {
+                                bw.write(cursor!!.getString(j)+",")
+                            }
 
                         }
 
                         if (j == 12) {
-                            if(cursor.getString(j) == null)
-                            {
-                                bw.write("null")
-                            }
-                            else {
-                                bw.write(cursor!!.getString(j))
-                            }                        }
+                            bw.write(cursor!!.getString(j)+",")
+                        }
+
+                        if (j == 13) {
+                            bw.write(cursor!!.getString(j))
+                        }
                     }
                     bw.newLine()
                     k++

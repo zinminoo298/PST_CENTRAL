@@ -288,6 +288,7 @@
                 android:inputType="numberDecimal"
                 android:singleLine="true"
                 android:text="1"
+                android:maxLength="8"
                 android:selectAllOnFocus="true"
                 android:textColor="#FFFFFF"
                 android:textSize="22dp"></EditText>

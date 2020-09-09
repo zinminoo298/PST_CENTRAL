@@ -14,9 +14,11 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.Exception
 import kotlin.math.cos
-
+var ck = 0
+var totalItems = 0
 var rowSeq = 0
 var barcode:String = ""
+var ckItem = 0
 
 /*Get BU*/
 var stockTakeID = ""
@@ -216,9 +218,9 @@ class DataBase(val context: Context){
     fun summeryValue(){
         val db1 = context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
         val selectQuery1 =
-            "SELECT * FROM summery WHERE Barcode = '$sku' AND Location = '$location' AND DocNum='$filename'"
+            "SELECT SUM(QNT) as QNT FROM summery WHERE Barcode = '$sku' AND Location = '$location' AND DocNum='$filename'"
         val cursor1 = db1.rawQuery(selectQuery1, null)
-        if (cursor1.moveToLast()) {
+        if (cursor1.moveToFirst()) {
             sku_qty = cursor1.getString(cursor1.getColumnIndex("QNT"))
         }
         else{
@@ -247,6 +249,31 @@ class DataBase(val context: Context){
         }
     }
 
+    fun showDetail() {
+        val db = context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
+        val query = "SELECT * FROM masters WHERE BarcodeSBC='$sku'"
+        val cursor = db.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
+            stock = cursor.getString(cursor.getColumnIndex("Stock"))
+            packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
+            status = cursor.getString(cursor.getColumnIndex("Status"))
+            cost = cursor.getString(cursor.getColumnIndex("Cost"))
+            stockID = cursor.getString(cursor.getColumnIndex("CountName"))
+            sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
+            sbc = sku!!
+            ibc = "null"
+            if (cost == null) {
+                cost = "0"
+            }
+            ck = 1
+        }
+        else{
+            ck = 0
+        }
+        db.close()
+    }
+
     fun checkItem1(){
         val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
         val query = "SELECT * FROM masters WHERE BarcodeSBC='$sku'"
@@ -264,7 +291,7 @@ class DataBase(val context: Context){
             if(cost == null){
                 cost = "0"
             }
-
+            ckItem = 1
             checkSeq()
             addItem1()
             summeryValue()
@@ -285,14 +312,14 @@ class DataBase(val context: Context){
                 if (cost == null) {
                     cost = "0"
                 }
-
+                ckItem = 1
                 checkSeq()
                 addItem1()
                 summeryValue()
 
             }
             else{
-                Toast.makeText(context,"NOT FOUND",Toast.LENGTH_SHORT).show()
+                ckItem = 0
             }
         }
         db.close()
@@ -505,7 +532,12 @@ class DataBase(val context: Context){
                 val query1 = "SELECT SUM(QNT) FROM summery Where DocNum = '${cursor.getString(0)}'"
                 val cursor1 = db.rawQuery(query1,null)
                 if(cursor1.moveToFirst()){
-                    item.file_qty = cursor1.getString(0)
+                    if(cursor1.getString(0) == null){
+                        item.file_qty = "0"
+                    }
+                    else{
+                        item.file_qty = cursor1.getString(0)
+                    }
                     println("QTY : "+item.file_qty)
                 }
                 Details.add(item)
@@ -872,6 +904,24 @@ class DataBase(val context: Context){
         db.update("date",valu,"location=? AND name=?", arrayOf(location, filename))
         println("Update COMPLETED")
         db.close()
+    }
+
+    fun getTotalItems(){
+        try{
+            val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
+            val query = "SELECT count(id) as id FROM masters"
+            val cursor = db.rawQuery(query,null)
+            if(cursor.moveToFirst()){
+                totalItems = cursor.getInt(0)
+            }
+            else{
+                totalItems = 0
+            }
+        }
+        catch(e:Exception){
+            Toast.makeText(context,"No master data found",Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     fun checkSaveFiles(){

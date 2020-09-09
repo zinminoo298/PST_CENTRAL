@@ -13,11 +13,9 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager.widget.ViewPager
-import com.example.ui.DataBasrHandler.DataBase
-import com.example.ui.DataBasrHandler.Details
+import com.example.ui.DataBasrHandler.*
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import net.vidageek.mirror.dsl.Mirror
@@ -46,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 //        db.getFileDetail
 //        db.checkSaveFiles()
         AsyncLoadMain(this).execute()
+        db.getTotalItems()
         val root= File( "/storage/emulated/0/Stock Export/")
         if (!root.exists()) {
             root.mkdirs()
@@ -75,7 +74,16 @@ class MainActivity : AppCompatActivity() {
             // Handle navigation view item clicks here.
             when (menuItem.itemId) {
                 R.id.nav_checkstock -> {
-                    AsyncTaskRunner(this,File("/sdcard/Download/database.db"),File("/data/data/com.example.ui/databases/database.db")).execute()
+                    val filepath="/sdcard/Download/database.db"
+                    val file=File(filepath)
+                    if(file.exists())
+                    {
+                        AsyncTaskRunner(this,File("/sdcard/Download/database.db"),File("/data/data/com.example.ui/databases/database.db")).execute()
+
+                    }
+                    else{
+                        Toast.makeText(this,"Master file not found",Toast.LENGTH_SHORT).show()
+                    }
 //                    copy(File("/sdcard/Download/database.db.zip"),File("/data/data/com.example.ui/databases/database.db.zip"))
 
                 }
@@ -140,6 +148,9 @@ class MainActivity : AppCompatActivity() {
 
         viewpager!!.adapter = adapter
         tabs!!.setupWithViewPager(viewpager)
+
+        val limit =  if (adapter.getCount() > 1) adapter.getCount() - 1 else 1
+        viewpager.setOffscreenPageLimit(limit)
 
     }
 
@@ -302,6 +313,9 @@ class MainActivity : AppCompatActivity() {
                 db.execSQL("DELETE FROM masters")
                 db.execSQL("DELETE FROM locations")
                 db.execSQL("DELETE FROM variances")
+                storeCode = ""
+                storeName = ""
+                stockTakeID = ""
             }
 
 
@@ -323,6 +337,10 @@ class MainActivity : AppCompatActivity() {
 
                 db1.execSQL("DELETE FROM summery")
                 db1.execSQL("DELETE FROM date")
+
+                storeCode = ""
+                storeName = ""
+                stockTakeID = ""
             }
 
             if(MASTER == null && Tran == null && All == null){
@@ -352,6 +370,7 @@ class MainActivity : AppCompatActivity() {
             Details.clear()
 //            db.getFileDetail
             db.checkSaveFiles()
+
             return "gg"
         }
 
@@ -412,7 +431,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPostExecute(result: String?) {
             pgd.dismiss()
-            Toast.makeText(context,"^_^ Download Completed", Toast.LENGTH_LONG).show()
+            Toast.makeText(context,"^_^ Restore Master Completed", Toast.LENGTH_LONG).show()
             val a=Intent(context, MainActivity::class.java)
             a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             context!!.startActivity(a)
