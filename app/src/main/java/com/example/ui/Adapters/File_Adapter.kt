@@ -74,7 +74,7 @@ class File_Adapter(
             val builder= AlertDialog.Builder(context)
 
             // Set a title for alert dialog
-            builder.setTitle("Delete Barcode : ${com.example.ui.DataBasrHandler.barcode}")
+            builder.setTitle("Delete Location : ${com.example.ui.DataBasrHandler.barcode}")
 
             // Set a message for alert dialog
             builder.setMessage("Are you sure??")

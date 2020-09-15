@@ -67,6 +67,7 @@ class Edit_Multistock : AppCompatActivity() {
         db.getBu()
         storename.setText(storeName)
         storecode.setText(storeCode)
+        bu.setText(BU)
         id.setText("STOCK TAKE ID : "+stockTakeID)
 
         db.getItem()

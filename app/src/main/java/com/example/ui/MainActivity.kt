@@ -18,10 +18,12 @@ import androidx.viewpager.widget.ViewPager
 import com.example.ui.DataBasrHandler.*
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_2.view.*
 import net.vidageek.mirror.dsl.Mirror
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.util.*
 
 var address:Any = ""
 
@@ -313,9 +315,11 @@ class MainActivity : AppCompatActivity() {
                 db.execSQL("DELETE FROM masters")
                 db.execSQL("DELETE FROM locations")
                 db.execSQL("DELETE FROM variances")
+                db.execSQL("DELETE FROM master_businesses")
                 storeCode = ""
                 storeName = ""
                 stockTakeID = ""
+                BU=""
             }
 
 
@@ -334,6 +338,7 @@ class MainActivity : AppCompatActivity() {
                 db.execSQL("DELETE FROM masters")
                 db.execSQL("DELETE FROM locations")
                 db.execSQL("DELETE FROM variances")
+                db.execSQL("DELETE FROM master_businesses")
 
                 db1.execSQL("DELETE FROM summery")
                 db1.execSQL("DELETE FROM date")
@@ -341,6 +346,7 @@ class MainActivity : AppCompatActivity() {
                 storeCode = ""
                 storeName = ""
                 stockTakeID = ""
+                BU = ""
             }
 
             if(MASTER == null && Tran == null && All == null){
@@ -431,6 +437,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPostExecute(result: String?) {
             pgd.dismiss()
+            setDate()
             Toast.makeText(context,"^_^ Restore Master Completed", Toast.LENGTH_LONG).show()
             val a=Intent(context, MainActivity::class.java)
             a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -440,6 +447,19 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCancelled() {
             running = false
+        }
+        fun setDate(){
+            val c = Calendar.getInstance()
+            val day = c[Calendar.DAY_OF_MONTH]
+            val month = c[Calendar.MONTH]
+            val year = c[Calendar.YEAR]
+            val mth = month +1
+            saveDate(""+day+"/"+mth+"/"+year)
+        }
+        private fun saveDate(v: String) {
+            var editor = context!!.getSharedPreferences("date", AppCompatActivity.MODE_PRIVATE).edit()
+            editor.putString("valDate", v)
+            editor.apply()
         }
 
         fun copy(src: File?, dst: File?) {

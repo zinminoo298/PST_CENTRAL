@@ -2,6 +2,7 @@ package com.example.ui
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -83,6 +84,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
         db.getBu()
         storename.setText(storeName)
         storecode.setText(storeCode)
+        bu.setText(BU)
         countid.setText("COUNT ID : "+stockTakeID)
 //
 //        Lock = findViewById(R.id.lock)
@@ -582,6 +584,47 @@ class Check_stock_Multiscan : AppCompatActivity() {
         }
 
     }
+
+    private fun alertDialog(qty: kotlin.String){
+        lateinit var dialog: androidx.appcompat.app.AlertDialog
+
+        // Initialize a new instance of alert dialog builder object
+        val builder= androidx.appcompat.app.AlertDialog.Builder(this)
+
+        // Set a title for alert dialog
+        builder.setTitle("Confirm QTY?")
+
+        // Set a message for alert dialog
+        builder.setMessage("Quantity : $qty")
+
+
+        // On click listener for dialog buttons
+        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    db.addDate()
+                    val intent = Intent(this,Check_stock_Multiscan::class.java)
+                    startActivity(intent)               }
+                DialogInterface.BUTTON_NEUTRAL -> {
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        // Set the alert dialog positive/yes button
+        builder.setPositiveButton("YES", dialogClickListener)
+
+        // Set the alert dialog neutral/cancel button
+        builder.setNeutralButton("CANCEL", dialogClickListener)
+
+
+        // Initialize the AlertDialog using builder object
+        dialog=builder.create()
+
+        // Finally, display the alert dialog
+        dialog.show()
+    }
+
 
 
     private fun dialog(){

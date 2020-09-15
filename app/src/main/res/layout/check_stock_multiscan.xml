@@ -110,6 +110,7 @@
                 android:layout_marginLeft="15dp">
 
                 <TextView
+                    android:id="@+id/bu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text=""
@@ -254,6 +255,7 @@
                 android:layout_height="30dp"
                 android:imeOptions="actionNext"
                 android:text = ""
+                android:selectAllOnFocus="true"
                 android:textSize="22dp"
                 android:textColor="#FFFFFF"
                 android:background="@drawable/edit_text_from"

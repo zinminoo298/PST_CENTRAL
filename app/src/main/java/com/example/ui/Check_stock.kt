@@ -86,6 +86,7 @@ class Check_stock : AppCompatActivity() {
         db.getBu()
         storename.setText(storeName)
         storecode.setText(storeCode)
+        bu.setText(BU)
         countid.setText("STOCK TAKE ID : "+stockTakeID)
 //
 //        Lock = findViewById(R.id.lock)

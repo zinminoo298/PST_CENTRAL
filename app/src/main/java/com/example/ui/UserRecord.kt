@@ -3,11 +3,14 @@ package com.example.ui
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ui.DataBasrHandler.*
 import kotlinx.android.synthetic.main.activity_user_record.*
@@ -118,9 +121,10 @@ class UserRecord : AppCompatActivity() {
                         doc_name="S$wifiMacAdds$Date$formatseq"
                         name = doc_name
                         updateCheck = "no"
-                        db.addDate()
-                        val intent = Intent(this,Check_stock::class.java)
-                        startActivity(intent)
+                        alertDialog(edtLocation.text.toString())
+//                        db.addDate()
+//                        val intent = Intent(this,Check_stock::class.java)
+//                        startActivity(intent)
                     }
                     else{
                         insp = inspector.text.toString()
@@ -128,14 +132,15 @@ class UserRecord : AppCompatActivity() {
                         date = db_date
                         time = currentTime
                         println(date+" "+time)
-                        updateCheck="no"
                         db.checkDate()
+                        updateCheck="no"
                         var formatseq =  String.format("%04d", fileSeq)
                         doc_name="Q$wifiMacAdds$Date$formatseq"
                         name = doc_name
-                        db.addDate()
-                        val intent = Intent(this,Check_stock_Multiscan::class.java)
-                        startActivity(intent)
+                        alertDialog1(edtLocation.text.toString())
+//                        db.addDate()
+//                        val intent = Intent(this,Check_stock_Multiscan::class.java)
+//                        startActivity(intent)
                     }
 
                 }
@@ -165,9 +170,11 @@ class UserRecord : AppCompatActivity() {
                     doc_name="S$wifiMacAdds$Date$formatseq"
                     name = doc_name
                     updateCheck = "no"
-                    db.addDate()
-                    val intent = Intent(this,Check_stock::class.java)
-                    startActivity(intent)
+                    alertDialog(edtLocation.text.toString())
+//                    db.addDate()
+//                    val intent = Intent(this,Check_stock::class.java)
+//                    startActivity(intent)
+
                 }
                 else{
                     insp = inspector.text.toString()
@@ -180,9 +187,11 @@ class UserRecord : AppCompatActivity() {
                     var formatseq =  String.format("%04d", fileSeq)
                     doc_name="Q$wifiMacAdds$Date$formatseq"
                     name = doc_name
-                    db.addDate()
-                    val intent = Intent(this,Check_stock_Multiscan::class.java)
-                    startActivity(intent)
+                    alertDialog1(edtLocation.text.toString())
+//                    db.addDate()
+//                    val intent = Intent(this,Check_stock_Multiscan::class.java)
+//                    startActivity(intent)
+
                 }
 
             }
@@ -308,6 +317,87 @@ class UserRecord : AppCompatActivity() {
 
     }
 
+    private fun alertDialog(location: kotlin.String){
+        lateinit var dialog: AlertDialog
+
+        // Initialize a new instance of alert dialog builder object
+        val builder= AlertDialog.Builder(this)
+
+        // Set a title for alert dialog
+        builder.setTitle("Confirm Location?")
+
+        // Set a message for alert dialog
+        builder.setMessage("Location : $location")
+
+
+        // On click listener for dialog buttons
+        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    db.addDate()
+                    val intent = Intent(this,Check_stock::class.java)
+                    startActivity(intent)                }
+                DialogInterface.BUTTON_NEUTRAL -> {
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        // Set the alert dialog positive/yes button
+        builder.setPositiveButton("YES", dialogClickListener)
+
+        // Set the alert dialog neutral/cancel button
+        builder.setNeutralButton("CANCEL", dialogClickListener)
+
+
+        // Initialize the AlertDialog using builder object
+        dialog=builder.create()
+
+        // Finally, display the alert dialog
+        dialog.show()
+    }
+
+    private fun alertDialog1(location: kotlin.String){
+        lateinit var dialog: AlertDialog
+
+        // Initialize a new instance of alert dialog builder object
+        val builder= AlertDialog.Builder(this)
+
+        // Set a title for alert dialog
+        builder.setTitle("Confirm Location?")
+
+        // Set a message for alert dialog
+        builder.setMessage("Location : $location")
+
+
+        // On click listener for dialog buttons
+        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    db.addDate()
+                    val intent = Intent(this,Check_stock_Multiscan::class.java)
+                    startActivity(intent)               }
+                DialogInterface.BUTTON_NEUTRAL -> {
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        // Set the alert dialog positive/yes button
+        builder.setPositiveButton("YES", dialogClickListener)
+
+        // Set the alert dialog neutral/cancel button
+        builder.setNeutralButton("CANCEL", dialogClickListener)
+
+
+        // Initialize the AlertDialog using builder object
+        dialog=builder.create()
+
+        // Finally, display the alert dialog
+        dialog.show()
+    }
+
+
     private fun setseq( v: kotlin.Int) {
         var editor=getSharedPreferences("seq", MODE_PRIVATE).edit()
         editor.putInt("seq", v)
@@ -344,5 +434,16 @@ class UserRecord : AppCompatActivity() {
             startActivity(a)
         super.onBackPressed()
     }
+
+//    override fun dispatchKeyEvent(KEvent: KeyEvent): Boolean {
+//        val keyaction = KEvent.action
+//        if (keyaction == KeyEvent.ACTION_DOWN) {
+//            val keycode = KEvent.keyCode
+//            val keyunicode = KEvent.getUnicodeChar(KEvent.metaState)
+//            val character = keyunicode.toChar()
+//            println("DEBUG MESSAGE KEY=$character KEYCODE=$keycode")
+//        }
+//        return super.dispatchKeyEvent(KEvent)
+//    }
 
 }

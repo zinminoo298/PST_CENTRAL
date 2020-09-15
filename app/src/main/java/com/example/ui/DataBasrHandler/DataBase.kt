@@ -287,7 +287,7 @@ class DataBase(val context: Context){
             stockID = cursor.getString(cursor.getColumnIndex("CountName"))
             sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
             sbc = sku!!
-            ibc = "null"
+            ibc = cursor.getString(cursor.getColumnIndex("BarcodeIBC"))
             if(cost == null){
                 cost = "0"
             }
@@ -308,7 +308,7 @@ class DataBase(val context: Context){
                 stockID = cursor.getString(cursor.getColumnIndex("CountName"))
                 sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
                 ibc = sku!!
-                sbc= "null"
+                sbc= cursor.getString(cursor.getColumnIndex("BarcodeSBC"))
                 if (cost == null) {
                     cost = "0"
                 }
@@ -1032,6 +1032,13 @@ class DataBase(val context: Context){
                 if(storeCode == "Null"){ storeCode = ""}
                 if(storeName == "Null"){ storeName = ""}
             }
+
+            val query1 = "SELECT * FROM master_businesses"
+            val cursor1 = db.rawQuery(query1,null)
+            if(cursor1.moveToFirst()){
+                BU = cursor1.getString(2)
+            }
+
             db.close()
         }
         catch(e:Exception){
