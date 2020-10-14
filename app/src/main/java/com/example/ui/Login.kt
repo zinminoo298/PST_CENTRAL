@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -23,6 +25,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.experimental.and
 
+var wifiMacAdds = ""
+var user = ""
 
 val seItem=ArrayList<File_list>()
 class Login : AppCompatActivity() {
@@ -38,6 +42,7 @@ class Login : AppCompatActivity() {
 
         db = DataBase(this)
         db.openDatabase()
+        edt_user.requestFocus()
 //        Details.clear()
 //        db.getFileDetail
 //        fileCount()
@@ -50,56 +55,89 @@ class Login : AppCompatActivity() {
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//            Toast.makeText(this, "Storage  Permission is Granted",
-//                Toast.LENGTH_SHORT).show();
-//            Summery
         } else {
             requestStoragePermission();
         }
 
         getMACAddress("wlan0")
 
+        edt_user.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+
+            if (event.keyCode == KeyEvent.KEYCODE_SPACE && event.action == KeyEvent.ACTION_UP || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+
+                if(edt_user.text.toString()==""){
+                    Toast.makeText(this,"Please enter username",Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    edt_password.requestFocus()
+                }
+            }
+
+            false
+
+        })
+
+        edt_password.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+
+            if (event.keyCode == KeyEvent.KEYCODE_SPACE && event.action == KeyEvent.ACTION_UP || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+
+                if(edt_user.text.toString()=="" || edt_password.text.toString() ==""){
+                    Toast.makeText(this,"Please enter username and password",Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    loginProcess()
+                }
+            }
+
+            false
+
+        })
+
         Login.setOnClickListener{
 
-            db.checkUser()
+            loginProcess()
+        }
 
-            if(edt_user.text.toString() == "" || edt_password.text.toString() == ""){
-               Toast.makeText(this,"Please enter username and password",Toast.LENGTH_SHORT).show()
+
+    }
+
+    fun loginProcess(){
+        db.checkUser()
+
+        if(edt_user.text.toString() == "" || edt_password.text.toString() == ""){
+            Toast.makeText(this,"Please enter username and password",Toast.LENGTH_SHORT).show()
+        }
+        else{
+
+            if(ck_user == 1){
+                usr = edt_user.text.toString()
+                psw = edt_password.text.toString()
+                db.getUser()
+                if(ck_user ==1){
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+                else{
+                    Toast.makeText(this,"Wrong password or username",Toast.LENGTH_SHORT).show()
+                }
             }
             else{
-
-                if(ck_user == 1){
+                if(edt_user.text.toString() == username && edt_password.text.toString() == password){
                     usr = edt_user.text.toString()
-                    psw = edt_password.text.toString()
-                    db.getUser()
-                    if(ck_user ==1){
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                    }
-                    else{
-                        Toast.makeText(this,"Wrong password or username",Toast.LENGTH_SHORT).show()
-                    }
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
                 }
-               else{
-                    if(edt_user.text.toString() == username && edt_password.text.toString() == password){
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                    }
-                    else{
-                        Toast.makeText(this,"Admin username or password is wrong",Toast.LENGTH_SHORT).show()
-                    }
+                else{
+                    Toast.makeText(this,"Admin username or password is wrong",Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-
-
     val Summery: MutableList<File_list>
         get() {
             val file1 = File("/sdcard/Download/result.csv")
-//            val seItem=ArrayList<File_list>()
-            val inFiles: MutableList<File> = ArrayList()
+             val inFiles: MutableList<File> = ArrayList()
             val files: Queue<File> = LinkedList()
             files.addAll(File("/sdcard/Download/").listFiles())
 
@@ -157,6 +195,7 @@ class Login : AppCompatActivity() {
                 for (idx in mac.indices) buf.append(String.format("%02X:", mac[idx]))
                 if (buf.length > 0) buf.deleteCharAt(buf.length - 1)
                 println("WIFI MAC : $buf")
+                wifiMacAdds = buf.toString().replace(":","")
                 return buf.toString()
             }
         } catch (ex: java.lang.Exception) {

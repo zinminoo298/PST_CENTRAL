@@ -20,4 +20,9 @@ interface FileDownloadClient{
         @Part("type") type: RequestBody?
     ): Call<ResponseBody?>?
 
+    @POST("/api/files/")
+    fun checkID(
+
+    )
+
 }

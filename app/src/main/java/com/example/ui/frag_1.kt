@@ -14,14 +14,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.ui.Adapters.File_Adapter
-import com.example.ui.Modle.File_list
+import com.example.ui.DataBasrHandler.DataBase
+import com.example.ui.DataBasrHandler.checkdata
+import com.example.ui.DataBasrHandler.fileCount
+import com.example.ui.DataBasrHandler.fileSaved
+import com.example.ui.Modle.FileDetail
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.fragment_1.view.*
 
 var scanCheck = 0
+internal lateinit var txt1:TextView
+internal lateinit var txt2:TextView
+lateinit var fab_main: FloatingActionButton
 
-class Frag1: Fragment(){
+class Frag1: Fragment(),UpdateButtonListener{
 
-    private lateinit var fab_main: FloatingActionButton
     private lateinit var fab1_single: FloatingActionButton
     private lateinit var fab2_multi:FloatingActionButton
     private lateinit var fab_open: Animation
@@ -33,7 +40,8 @@ class Frag1: Fragment(){
     var isOpen = false
 
     private var mcontext: Context? = null
-    internal var seItem: MutableList<File_list> = ArrayList<File_list>()
+    internal var stItem: MutableList<FileDetail> = ArrayList<FileDetail>()
+    internal lateinit var db:DataBase
 
     override fun onAttach(activity: Activity) {
         // TODO Auto-generated method stub
@@ -49,20 +57,44 @@ class Frag1: Fragment(){
         savedInstanceState: Bundle?
     ): View? {
 
-        val view:View = inflater.inflate(R.layout.fragment_1,container,false)
+        val view:View = inflater.inflate(R.layout.fragment_1, container, false)
         val listview = view.findViewById<ListView>(R.id.lv)
-        val adapter=File_Adapter( mcontext!!)
+        val adapter=File_Adapter(stItem, mcontext!!)
+        val db = DataBase(mcontext!!)
+        updateButton = this
+//        db.getFileDetail
         listview.adapter=adapter
+        adapter.refresh(db.getFileDetail)
+        txt1 = view.findViewById(R.id.total_lc)
+        txt2 = view.findViewById(R.id.totalsaved)
+
+        view.total_lc.setText(fileCount.toString())
+        view.totalsaved.setText(fileSaved.toString())
 
         fab_main = view.findViewById(R.id.fab);
         fab1_single = view.findViewById(R.id.fab1);
         fab2_multi = view.findViewById(R.id.fab2);
-        fab_close = AnimationUtils.loadAnimation(mcontext!!.applicationContext,R.anim.fab_close)
+        fab_close = AnimationUtils.loadAnimation(mcontext!!.applicationContext, R.anim.fab_close)
         fab_open = AnimationUtils.loadAnimation(mcontext!!.applicationContext, R.anim.fab_open);
-        fab_clock = AnimationUtils.loadAnimation(mcontext!!.applicationContext, R.anim.fab_rotate_clock);
-        fab_anticlock = AnimationUtils.loadAnimation(mcontext!!.applicationContext, R.anim.fab_rotate_anticlock);
+        fab_clock = AnimationUtils.loadAnimation(
+            mcontext!!.applicationContext,
+            R.anim.fab_rotate_clock
+        );
+        fab_anticlock = AnimationUtils.loadAnimation(
+            mcontext!!.applicationContext,
+            R.anim.fab_rotate_anticlock
+        );
         textview_mail = view.findViewById(R.id.textview_mail);
         textview_share = view.findViewById(R.id.textview_share);
+
+
+        if(checkdata == 0){
+            fab_main.isEnabled = false
+            Toast.makeText(context, "No Master Data", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            fab_main.isEnabled = true
+        }
 
         fab_main.setOnClickListener {
 
@@ -90,20 +122,33 @@ class Frag1: Fragment(){
 
         fab2_multi.setOnClickListener {
             scanCheck = 1
-            val intent = Intent(mcontext,UserRecord::class.java)
+            val intent = Intent(mcontext, UserRecord::class.java)
             startActivity(intent)
+//            Toast.makeText(context,"Under Development",Toast.LENGTH_SHORT).show()
         }
 
         fab1_single.setOnClickListener {
             scanCheck = 0
-            val intent = Intent(mcontext,UserRecord::class.java)
+            val intent = Intent(mcontext, UserRecord::class.java)
             startActivity(intent)
         }
 
         return view
     }
 
-
-
+    override fun onUpdate(status: Boolean) {
+        if(status){
+            fab_main.isEnabled = true
+        }
+        else{
+            Toast.makeText(mcontext,"DOWNLOAD ERROR",Toast.LENGTH_SHORT).show()
+        }
     }
+
+    companion object {
+        var updateButton: UpdateButtonListener? = null
+    }
+
+
+}
 

@@ -14,4 +14,18 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="DialogSlide">
+        <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <style name="DialogSlide1">
+        <item name="android:windowEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <style name="HeaderBar">
+        <item name="android:background">@color/colorPrimary1</item>
+    </style>
+
 </resources>

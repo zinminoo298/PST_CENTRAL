@@ -31,9 +31,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.2"
-                android:text="100,000"
+                android:text=""
+                android:id="@+id/items"
                 android:textColor="#FFFFFF"
-                android:textSize="40dp"
+                android:textSize="32dp"
                 android:gravity="center"></TextView>
 
         </LinearLayout>
@@ -56,12 +57,13 @@
                 android:gravity="center"></TextView>
 
             <TextView
+                android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.2"
-                android:text="12/04/20"
+                android:text="15/9/2020"
                 android:textColor="#FFFFFF"
-                android:textSize="38dp"
+                android:textSize="32dp"
                 android:gravity="center"></TextView>
 
         </LinearLayout>
@@ -117,10 +119,11 @@
                 android:textColor="#AD807D">
             </TextView>
             <TextView
+                android:id="@+id/businessUnit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12dp"
-                android:text="TOPS Supermarket"
+                android:text=""
                 android:textColor="#000000">
 
             </TextView>
@@ -142,10 +145,11 @@
                 android:textColor="#AD807D">
             </TextView>
             <TextView
+                android:id="@+id/storename"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12dp"
-                android:text="TMS Srisaman"
+                android:text=""
                 android:textColor="#000000">
 
             </TextView>
@@ -167,10 +171,11 @@
                 android:textColor="#AD807D"></TextView>
 
             <TextView
+                android:id="@+id/stocktakeid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12dp"
-                android:text="0000460635"
+                android:text=""
                 android:textColor="#000000">
 
             </TextView>
@@ -192,10 +197,11 @@
                 android:textColor="#AD807D">
             </TextView>
             <TextView
+                android:id="@+id/storecode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12dp"
-                android:text="668"
+                android:text=""
                 android:textColor="#000000">
 
             </TextView>

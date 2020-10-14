@@ -3,6 +3,7 @@ package com.example.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.ui.Adapters.File_Adapter
+import com.example.ui.Modle.FileDetail
 import com.example.ui.Modle.File_list
 import kotlinx.android.synthetic.main.activity_list.*
 import java.io.File
@@ -11,7 +12,7 @@ import kotlin.collections.ArrayList
 
 class List : AppCompatActivity() {
 
-//    internal var seItem: MutableList<File_list> = ArrayList<File_list>()
+    internal var seItem: MutableList<FileDetail> = ArrayList<FileDetail>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,7 @@ class List : AppCompatActivity() {
     }
 
     private fun Summery() {
-        val adapter=File_Adapter( this)
+        val adapter=File_Adapter( seItem,this)
 //        println (adapter.count)
         ls.adapter=adapter
 //        list_summery.getItemAtPosition(1)
