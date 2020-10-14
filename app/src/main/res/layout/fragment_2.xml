@@ -34,7 +34,7 @@
                 android:text=""
                 android:id="@+id/items"
                 android:textColor="#FFFFFF"
-                android:textSize="40dp"
+                android:textSize="32dp"
                 android:gravity="center"></TextView>
 
         </LinearLayout>
@@ -61,9 +61,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.2"
-                android:text=""
+                android:text="15/9/2020"
                 android:textColor="#FFFFFF"
-                android:textSize="38dp"
+                android:textSize="32dp"
                 android:gravity="center"></TextView>
 
         </LinearLayout>

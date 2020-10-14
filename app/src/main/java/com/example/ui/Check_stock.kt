@@ -1,8 +1,16 @@
 package com.example.ui
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.AssetFileDescriptor
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.media.ToneGenerator
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -21,12 +29,11 @@ import androidx.appcompat.widget.Toolbar
 import com.example.ui.DataBasrHandler.*
 import com.example.ui.Modle.File_list
 import kotlinx.android.synthetic.main.check_stock.*
-import kotlinx.android.synthetic.main.check_stock.storename
-import kotlinx.android.synthetic.main.check_stock.storecode
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 var requestBack = 0
 
@@ -53,8 +60,10 @@ class Check_stock : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.check_stock)
 
+        requestBack = 2
         imgComplete = findViewById(R.id.complete)
         imgImcomplete = findViewById(R.id.imcomplete)
+        loadCount()
 
         if(updateCheck == "no"){
             imgComplete.visibility = GONE
@@ -87,58 +96,9 @@ class Check_stock : AppCompatActivity() {
         storename.setText(storeName)
         storecode.setText(storeCode)
         bu.setText(BU)
-        countid.setText("STOCK TAKE ID : "+stockTakeID)
-//
-//        Lock = findViewById(R.id.lock)
-//        Unlock = findViewById(R.id.unlock)
+        countid.setText("STOCK TAKE ID : " + stockTakeID)
         scan_qty.isFocusable = false
 
-//        Lock.setOnClickListener {
-//            scan_qty.isFocusable  = true
-//            scan_qty.isFocusableInTouchMode = true
-//            scan_qty.requestFocus()
-//            Lock.visibility = GONE
-//            Unlock.visibility = View.VISIBLE
-//        }
-//
-//        Unlock.setOnClickListener {
-//            scan_qty.isFocusable = false
-//            scan_qty.isFocusableInTouchMode = false
-//            Lock.visibility = View.VISIBLE
-//            Unlock.visibility = GONE
-//        }
-
-        /*Bottom Nav Bar actions*/
-//        val bottomnavigationview: BottomNavigationView = findViewById(R.id.bottom_navigation)
-//        bottomnavigationview.setOnNavigationItemSelectedListener { menuItem ->
-//
-//            when (menuItem.itemId) {
-//                R.id.action_clear -> {
-//                    exportDialog(R.style.DialogSlide,this)
-//
-//                }
-//
-//                R.id.action_edit -> {
-//                    val intent = Intent(this,Edit_stock::class.java)
-//                    startActivity(intent)
-//                }
-//
-//                R.id.action_back -> {
-//                    if(ck_activity == "0"){
-//                        val a=Intent(this, ViewStock::class.java)
-//                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                        startActivity(a)
-//                    }
-//                    else{
-//                        val a=Intent(this, UserRecord::class.java)
-//                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                        startActivity(a)
-//                    }                }
-//
-//            }
-//            true
-//
-//        }
 
         txt_doc.setText(doc_name)
         txt_lc.setText(location)
@@ -146,34 +106,84 @@ class Check_stock : AppCompatActivity() {
         scan_bc.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-                if(scan_bc.text.toString() == ""){
-                    Toast.makeText(this,"Please Enter SKU",Toast.LENGTH_SHORT).show()
+                if (scan_bc.text.toString() == "") {
+                    Toast.makeText(this, "Please Enter SKU", Toast.LENGTH_SHORT).show()
                     scan_bc.setText("")
-                }
-
-                else{
+                } else {
                     sku = scan_bc.text.toString()
-                    qty =scan_qty.text.toString()
+                    qty = scan_qty.text.toString()
                     filename = txt_doc.text.toString()
                     db.checkItem1()
 
-                    if(ckItem == 1){
-                        txt_sku_qty.setText(sku_qty)
-                        txt_lc_qty.setText(lc_qty)
-                        txt_pdName.setText(pdName)
-                        txt_cost.setText(cost.toString())
-                        txt_pack.setText(packSz.toString())
-                        txt_status.setText(status)
-                        txt_stock.setText(stock.toString())
-                        txt_sku_name.setText(scan_bc.text.toString())
-                        total_am.setText(lc_value)
-                        scan_bc.setText("")
-                        scan_bc.requestFocus()
+                    if (ckItem == 1) {
+                        if (status!!.length == 1) {
+                            db.checkSeq()
+                            db.addItem1()
+                            db.summeryValue()
+                            txt_sku_qty.setText(sku_qty)
+                            txt_lc_qty.setText(lc_qty)
+                            txt_pdName.setText(pdName)
+                            txt_cost.setText(cost.toString())
+                            txt_pack.setText(packSz.toString())
+                            txt_status.setText(status)
+                            txt_stock.setText(stock.toString())
+                            txt_sku_name.setText(scan_bc.text.toString())
+                            total_am.setText(lc_value)
+                            scan_bc.setText("")
+                            scan_bc.requestFocus()
 
-                        imgComplete.visibility = View.GONE
-                        imgImcomplete.visibility = View.VISIBLE
-                    }
-                    else{
+                            imgComplete.visibility = View.GONE
+                            imgImcomplete.visibility = View.VISIBLE
+                        } else {
+                            if (status!!.length > 1) {
+                                if (status!!.substring(1) == "Non-Sales") {
+                                    Toast.makeText(this, "Barcode Non-Sales", Toast.LENGTH_LONG)
+                                        .show()
+
+//                                    var mediaPlayer = MediaPlayer.create(
+//                                        applicationContext,
+//                                        R.raw.buzz
+//                                    )
+//                                    mediaPlayer.start()
+//                                    val handler = Handler()
+//                                    handler.postDelayed({ mediaPlayer.stop() }, 1 * 1000.toLong())
+
+//                                    val afd: AssetFileDescriptor = assets.openFd("buzz.wav")
+//                                    val player = MediaPlayer()
+//                                    player.setDataSource(
+//                                        afd.getFileDescriptor(),
+//                                        afd.getStartOffset(),
+//                                        afd.getLength()
+//                                    )
+//                                    player.prepare()
+//                                    player.start()
+//                                    val handler = Handler()
+//                                    handler.postDelayed({ player.stop() }, 1 * 1000.toLong())
+                                    alertDialog1(status!!)
+                                    AsyncTaskRunner(this).execute()
+
+                                } else {
+                                    db.checkSeq()
+                                    db.addItem1()
+                                    db.summeryValue()
+                                    txt_sku_qty.setText(sku_qty)
+                                    txt_lc_qty.setText(lc_qty)
+                                    txt_pdName.setText(pdName)
+                                    txt_cost.setText(cost.toString())
+                                    txt_pack.setText(packSz.toString())
+                                    txt_status.setText(status)
+                                    txt_stock.setText(stock.toString())
+                                    txt_sku_name.setText(scan_bc.text.toString())
+                                    total_am.setText(lc_value)
+                                    scan_bc.setText("")
+                                    scan_bc.requestFocus()
+
+                                    imgComplete.visibility = View.GONE
+                                    imgImcomplete.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    } else {
                         txt_sku_qty.setText("")
                         txt_lc_qty.setText("")
                         txt_pdName.setText("")
@@ -185,8 +195,9 @@ class Check_stock : AppCompatActivity() {
                         total_am.setText("")
                         scan_bc.setText("")
                         scan_bc.requestFocus()
-                        Toast.makeText(this,"Barcode Not Found",Toast.LENGTH_SHORT).show()
-
+                        Toast.makeText(this, "Barcode Not Found", Toast.LENGTH_SHORT).show()
+                        val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                        toneGen1.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                     }
                 }
             }
@@ -197,37 +208,86 @@ class Check_stock : AppCompatActivity() {
 
         scan_bc.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
 
-            if (event.keyCode == KeyEvent.KEYCODE_SPACE && event.action == KeyEvent.ACTION_UP || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+            if (event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
 
-                if(scan_bc.text.toString() == ""){
-                    Toast.makeText(this,"Please Enter SKU",Toast.LENGTH_SHORT).show()
+                if (scan_bc.text.toString() == "") {
+                    Toast.makeText(this, "Please Enter SKU", Toast.LENGTH_SHORT).show()
                     scan_bc.setText("")
-                }
-
-                else{
+                } else {
                     sku = scan_bc.text.toString()
-                    qty =scan_qty.text.toString()
+                    qty = scan_qty.text.toString()
                     filename = txt_doc.text.toString()
                     updateCheck = "no"
                     db.checkItem1()
 
-                    if(ckItem == 1){
-                        txt_sku_qty.setText(sku_qty)
-                        txt_lc_qty.setText(lc_qty)
-                        txt_pdName.setText(pdName)
-                        txt_cost.setText(cost.toString())
-                        txt_pack.setText(packSz.toString())
-                        txt_status.setText(status)
-                        txt_stock.setText(stock.toString())
-                        txt_sku_name.setText(scan_bc.text.toString())
-                        total_am.setText(lc_value)
-                        scan_bc.setText("")
-                        scan_bc.requestFocus()
+                    if (ckItem == 1) {
+                        if (status!!.length == 1) {
+                            db.checkSeq()
+                            db.addItem1()
+                            db.summeryValue()
+                            txt_sku_qty.setText(sku_qty)
+                            txt_lc_qty.setText(lc_qty)
+                            txt_pdName.setText(pdName)
+                            txt_cost.setText(cost.toString())
+                            txt_pack.setText(packSz.toString())
+                            txt_status.setText(status)
+                            txt_stock.setText(stock.toString())
+                            txt_sku_name.setText(scan_bc.text.toString())
+                            total_am.setText(lc_value)
+                            scan_bc.setText("")
+                            scan_bc.requestFocus()
 
-                        imgComplete.visibility = View.GONE
-                        imgImcomplete.visibility = View.VISIBLE
-                    }
-                    else{
+                            imgComplete.visibility = View.GONE
+                            imgImcomplete.visibility = View.VISIBLE
+                        } else {
+                            if (status!!.length > 1) {
+                                if (status!!.substring(1) == "Non-Sales") {
+                                    Toast.makeText(this, "Barcode Non-Sales", Toast.LENGTH_LONG)
+                                        .show()
+
+//                                    var mediaPlayer = MediaPlayer.create(
+//                                        applicationContext,
+//                                        R.raw.buzz
+//                                    )
+//                                    mediaPlayer.start()
+//                                    val handler = Handler()
+//                                    handler.postDelayed({ mediaPlayer.stop() }, 1 * 1000.toLong())
+
+//                                    val afd: AssetFileDescriptor = assets.openFd("buzz.wav")
+//                                    val player = MediaPlayer()
+//                                    player.setDataSource(
+//                                        afd.getFileDescriptor(),
+//                                        afd.getStartOffset(),
+//                                        afd.getLength()
+//                                    )
+//                                    player.prepare()
+//                                    player.start()
+//                                    val handler = Handler()
+//                                    handler.postDelayed({ player.stop() }, 1 * 1000.toLong())
+                                    alertDialog1(status!!)
+                                    AsyncTaskRunner(this).execute()
+                                } else {
+                                    db.checkSeq()
+                                    db.addItem1()
+                                    db.summeryValue()
+                                    txt_sku_qty.setText(sku_qty)
+                                    txt_lc_qty.setText(lc_qty)
+                                    txt_pdName.setText(pdName)
+                                    txt_cost.setText(cost.toString())
+                                    txt_pack.setText(packSz.toString())
+                                    txt_status.setText(status)
+                                    txt_stock.setText(stock.toString())
+                                    txt_sku_name.setText(scan_bc.text.toString())
+                                    total_am.setText(lc_value)
+                                    scan_bc.setText("")
+                                    scan_bc.requestFocus()
+
+                                    imgComplete.visibility = View.GONE
+                                    imgImcomplete.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    } else {
                         txt_sku_qty.setText("")
                         txt_lc_qty.setText("")
                         txt_pdName.setText("")
@@ -239,7 +299,9 @@ class Check_stock : AppCompatActivity() {
                         total_am.setText("")
                         scan_bc.setText("")
                         scan_bc.requestFocus()
-                        Toast.makeText(this,"Barcode Not Found",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Barcode Not Found", Toast.LENGTH_SHORT).show()
+                        val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                        toneGen1.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                     }
 
 //                    }
@@ -381,28 +443,27 @@ class Check_stock : AppCompatActivity() {
 
             Handler().postDelayed({
 
-                val filepath="/sdcard/Stock Export/$doc_name.csv"
-                val file=File(filepath)
-                if(file.exists())
-                {
+                val filepath = "/sdcard/Stock Export/$doc_name.csv"
+                val file = File(filepath)
+                if (file.exists()) {
                     export()
 //                Toast.makeText(this, "FILE EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
 
-                }
-                else{
-                    generateNoteOnSD(this,"/$doc_name.csv")
-                    if(file.exists())
-                    {
+                } else {
+                    generateNoteOnSD(this, "/$doc_name.csv")
+                    if (file.exists()) {
                         export()
 //                    Toast.makeText(this, "FILE EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
-                    }
-
-                    else{
-                        Toast.makeText(this, "EXPORT UNSUCCESSFUL. MAKE SURE TO GIVE STORAGE ACCESS", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "EXPORT UNSUCCESSFUL. MAKE SURE TO GIVE STORAGE ACCESS",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                 }
-            },1000)
+            }, 1000)
 
 
         }
@@ -410,7 +471,7 @@ class Check_stock : AppCompatActivity() {
 
     fun generateNoteOnSD(context: Context, sFileName: String) {
         try {
-            val root=File( "/sdcard/Stock Export")
+            val root=File("/sdcard/Stock Export")
             if (!root.exists()) {
                 root.mkdirs()
             }
@@ -459,37 +520,38 @@ class Check_stock : AppCompatActivity() {
                         }
                         if (j == 1) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 2) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 3) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 4) {
-
-                            bw.write(cursor!!.getString(j)+",")
+                            val formatted = java.lang.String.format("%01d", k)
+                            bw.write("$formatted,")
+//                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 5) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 6) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 7) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
                         }
                         if (j == 8) {
 
@@ -515,7 +577,7 @@ class Check_stock : AppCompatActivity() {
                         }
                         if (j == 10) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
 
@@ -526,13 +588,13 @@ class Check_stock : AppCompatActivity() {
                                 bw.write(",")
                             }
                             else {
-                                bw.write(cursor!!.getString(j)+",")
+                                bw.write(cursor!!.getString(j) + ",")
                             }
 
                         }
 
                         if (j == 12) {
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
                         }
 
                         if (j == 13) {
@@ -547,27 +609,46 @@ class Check_stock : AppCompatActivity() {
             }
             updateCheck = "yes"
             db.updateStatus()
-            Toast.makeText(this,"EXPORT SUCCESSFUL",Toast.LENGTH_LONG).show()
+            println(location + filename)
+            Toast.makeText(this, "EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
             dialog.dismiss()
+
+            var filecountCheck = 0
+            val query = "SELECT seq FROM date WHERE date='${com.example.ui.DataBasrHandler.date}'"
+            val cursor1 = database.rawQuery(query,null)
+            if(cursor1.moveToLast()){
+                filecountCheck = cursor1.getInt(0)
+                println("FILE COUNT $filecountCheck    $countAlert")
+            }
+            else{
+                filecountCheck = 0
+                println("FILE COUNT $filecountCheck  $countAlert")
+            }
             database.close()
             imgImcomplete.visibility = GONE
             imgComplete.visibility = VISIBLE
 
-            if(requestBack == 1){
-                if(ck_activity == "0"){
-                    val a=Intent(this, ViewStock::class.java)
-                    a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(a)
-                }
-                else{
-                    val a=Intent(this, UserRecord::class.java)
-                    a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(a)
-                }
+            if(countAlert <= filecountCheck){
+                fileCountAlert(filecountCheck)
             }
             else{
+                if(requestBack == 1){
+                    if(ck_activity == "0"){
+                        val a=Intent(this, ViewStock::class.java)
+                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(a)
+                    }
+                    else{
+                        val a=Intent(this, UserRecord::class.java)
+                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(a)
+                    }
+                }
+                else{
 
+                }
             }
+
 //            confirmDel()
 
         }
@@ -578,57 +659,102 @@ class Check_stock : AppCompatActivity() {
 
     }
 
+    private fun fileCountAlert(v:Int){
+        lateinit var dialog: androidx.appcompat.app.AlertDialog
+
+        // Initialize a new instance of alert dialog builder object
+        val builder= androidx.appcompat.app.AlertDialog.Builder(this)
+
+        // Set a title for alert dialog
+        builder.setTitle("File Count Alert! ($countAlert)")
+
+        // Set a message for alert dialog
+        builder.setMessage("Total counted file is $v")
 
 
-    private fun dialog(){
-        val builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val view = inflater.inflate(R.layout.new_item,null)
-        builder.setView(view)
-        val dialog: AlertDialog = builder.create()
-//        dialog.window?.attributes?.windowAnimations = R.style.DialogSlide
-//        dialog.setMessage("Please Enter Password!!")
-        dialog.show()
+        // On click listener for dialog buttons
+        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    dialog.dismiss()
+                }
 
-        txt_sku =view.findViewById<TextView>(R.id.txt_bc)
-        edt_desc = view.findViewById<EditText>(R.id.edt_desc)
-        btn_save = view.findViewById<Button>(R.id.btn_save)
-        btn_cancel = view.findViewById<Button>(R.id.btn_cancel)
-        txt_sku.setText(sku)
-
-        btn_save.setOnClickListener{
-            desc = edt_desc.text.toString()
-            db.addItem()
-
-            db.viewData()
-            txt_sku_qty.setText(sku_qty)
-            txt_lc_qty.setText(lc_qty)
-            txt_pdName.setText(newitem)
-            txt_cost.setText("")
-            txt_pack.setText("")
-            txt_status.setText("")
-            txt_stock.setText("")
-            txt_sku_name.setText(sku)
-            total_am.setText(lc_value)
-
-            getTime()
-            val line = "$doc_name,$insp,$location,${sku},${edt_desc.text},0,${scan_qty.text.toString()},$formatted_date"
-            val sb = StringBuilder()
-            var rest = 188 - line.length
-            sb.append(line)
-            for(i in 1..rest){
-                sb.append(" ")
             }
-            println(sb.length)
-//            writeToFile(line,this)
-            Toast.makeText(this, "Scan Completed", Toast.LENGTH_SHORT).show()
-
-            dialog.dismiss()
         }
 
-        btn_cancel.setOnClickListener{
-            dialog.dismiss()
+        // Set the alert dialog positive/yes button
+        builder.setPositiveButton("OK", dialogClickListener)
+
+        // Initialize the AlertDialog using builder object
+        dialog=builder.create()
+        dialog.setCancelable(false)
+        // Finally, display the alert dialog
+        dialog.show()
+    }
+
+    private fun alertDialog1(status: kotlin.String){
+        lateinit var dialog: androidx.appcompat.app.AlertDialog
+
+        // Initialize a new instance of alert dialog builder object
+        val builder= androidx.appcompat.app.AlertDialog.Builder(this)
+
+        // Set a title for alert dialog
+        builder.setTitle("Do you want to continue?")
+
+        // Set a message for alert dialog
+        builder.setMessage("Status : $status")
+
+
+        // On click listener for dialog buttons
+        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    db.checkSeq()
+                    db.addItem1()
+                    db.summeryValue()
+                    txt_sku_qty.setText(sku_qty)
+                    txt_lc_qty.setText(lc_qty)
+                    txt_pdName.setText(pdName)
+                    txt_cost.setText(cost.toString())
+                    txt_pack.setText(packSz.toString())
+                    txt_status.setText(com.example.ui.DataBasrHandler.status)
+                    txt_stock.setText(stock.toString())
+                    txt_sku_name.setText(scan_bc.text.toString())
+                    total_am.setText(lc_value)
+                    scan_bc.setText("")
+                    scan_bc.requestFocus()
+
+                    imgComplete.visibility = View.GONE
+                    imgImcomplete.visibility = View.VISIBLE
+                    updateCheck = "no"
+                }
+                DialogInterface.BUTTON_NEUTRAL -> {
+                    scan_qty.setText("1")
+                    scan_bc.setText("")
+                    scan_bc.requestFocus()
+                    updateCheck = "yes"
+                    dialog.dismiss()
+
+                }
+            }
         }
+
+        // Set the alert dialog positive/yes button
+        builder.setPositiveButton("YES", dialogClickListener)
+
+        // Set the alert dialog neutral/cancel button
+        builder.setNeutralButton("NO", dialogClickListener)
+
+        // Initialize the AlertDialog using builder object
+        dialog=builder.create()
+
+        // Finally, display the alert dialog
+        dialog.show()
+    }
+
+    private fun loadCount(){
+        var prefs = getSharedPreferences("count", Activity.MODE_PRIVATE)
+        countAlert = prefs.getInt("valCount", 50)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -638,17 +764,17 @@ class Check_stock : AppCompatActivity() {
 
             db.getItem()
             if(itemDetail == " , , , , , , , , , , , ,"){
-                Toast.makeText(this,"No Scanned Data",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No Scanned Data", Toast.LENGTH_SHORT).show()
             }
             else{
-                val intent = Intent(this,Edit_stock::class.java)
+                val intent = Intent(this, Edit_stock::class.java)
                 startActivity(intent)
             }
             return true
         }
 
         if (itemid == R.id.action_save) {
-            exportDialog(R.style.DialogSlide,this)
+            exportDialog(R.style.DialogSlide, this)
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -664,7 +790,7 @@ class Check_stock : AppCompatActivity() {
 
         if(updateCheck == "no"){
             requestBack = 1
-            exportDialog(R.style.DialogSlide,this)
+            exportDialog(R.style.DialogSlide, this)
         }
 
         else{
@@ -681,5 +807,34 @@ class Check_stock : AppCompatActivity() {
             }
             super.onBackPressed()
         }
+    }
+
+    private class AsyncTaskRunner(val context: Context?) : AsyncTask<String, String, String>() {
+
+
+        override fun doInBackground(vararg params: String?): String {
+
+            return "gg"
+        }
+
+        override fun onPreExecute() {
+            val afd: AssetFileDescriptor = context!!.assets.openFd("buzz.wav")
+            val player = MediaPlayer()
+            player.setDataSource(
+                afd.getFileDescriptor(),
+                afd.getStartOffset(),
+                afd.getLength()
+            )
+            player.prepare()
+            player.start()
+            val handler = Handler()
+            handler.postDelayed({ player.stop() }, 1 * 1000.toLong())
+            super.onPreExecute()
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+        }
+
     }
 }

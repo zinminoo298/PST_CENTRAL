@@ -1,9 +1,15 @@
 package com.example.ui
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.AssetFileDescriptor
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.media.ToneGenerator
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -50,6 +56,8 @@ class Check_stock_Multiscan : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.check_stock_multiscan)
 
+        loadCount()
+        requestBack = 2
         imgComplete = findViewById(R.id.complete)
         imgImcomplete = findViewById(R.id.imcomplete)
 
@@ -85,7 +93,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
         storename.setText(storeName)
         storecode.setText(storeCode)
         bu.setText(BU)
-        countid.setText("COUNT ID : "+stockTakeID)
+        countid.setText("COUNT ID : " + stockTakeID)
 //
 //        Lock = findViewById(R.id.lock)
 //        Unlock = findViewById(R.id.unlock)
@@ -143,32 +151,78 @@ class Check_stock_Multiscan : AppCompatActivity() {
         scan_bc.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
 
-                if(scan_bc.text.toString() == ""){
-                    Toast.makeText(this,"Please Enter SKU",Toast.LENGTH_SHORT).show()
-                }
-
-                else{
+                if (scan_bc.text.toString() == "") {
+                    Toast.makeText(this, "Please Enter SKU", Toast.LENGTH_LONG).show()
+                } else {
                     sku = scan_bc.text.toString()
                     db.showDetail()
-                    if(ck == 1){
-                        txt_sku_qty.setText(sku_qty)
-                        txt_lc_qty.setText("")
-                        txt_pdName.setText(pdName)
-                        txt_cost.setText(cost.toString())
-                        txt_pack.setText(packSz.toString())
-                        txt_status.setText(status)
-                        txt_stock.setText(stock.toString())
-                        txt_sku_name.setText(scan_bc.text.toString())
-                        total_am.setText("")
+                    db.showTotalQty()
+                    if (ck == 1) {
 
-//                        scan_bc.setText("")
-                        scan_qty.setText("1")
-                        scan_qty.requestFocus()
-                        scan_qty.setSelectAllOnFocus(true)
-                    }
+                        if (status!!.length == 1) {
+                            txt_sku_qty.setText(sku_qty)
+                            txt_lc_qty.setText("")
+                            txt_pdName.setText(pdName)
+                            txt_cost.setText(cost.toString())
+                            txt_pack.setText(packSz.toString())
+                            txt_status.setText(status)
+                            txt_stock.setText(stock.toString())
+                            txt_sku_name.setText(scan_bc.text.toString())
+                            txt_sku_qty.setText(totalQty.toString())
+                            total_am.setText("")
 
-                    else{
+                            scan_qty.setText("1")
+                            scan_qty.requestFocus()
+                            scan_qty.setSelectAllOnFocus(true)
+                        } else {
+                            if (status!!.length > 1) {
+                                if (status!!.substring(1) == "Non-Sales") {
+                                    Toast.makeText(this, "Barcode Non-Sales", Toast.LENGTH_LONG)
+                                        .show()
+//                                    var mediaPlayer = MediaPlayer.create(applicationContext, R.raw.buzz)
+//                                    mediaPlayer.start()
+//                                    val handler = Handler()
+//                                    handler.postDelayed({ mediaPlayer.stop() }, 1 * 1000.toLong())
+//
+                                    AsyncTaskRunner(this).execute()
+
+                                    txt_sku_qty.setText(sku_qty)
+                                    txt_lc_qty.setText("")
+                                    txt_pdName.setText(pdName)
+                                    txt_cost.setText(cost.toString())
+                                    txt_pack.setText(packSz.toString())
+                                    txt_status.setText(status)
+                                    txt_stock.setText(stock.toString())
+                                    txt_sku_name.setText(scan_bc.text.toString())
+                                    total_am.setText("")
+
+                                    scan_qty.setText("1")
+                                    scan_qty.requestFocus()
+                                    scan_qty.setSelectAllOnFocus(true)
+//                                alertDialog1(status!!)
+
+                                } else {
+                                    txt_sku_qty.setText(sku_qty)
+                                    txt_lc_qty.setText("")
+                                    txt_pdName.setText(pdName)
+                                    txt_cost.setText(cost.toString())
+                                    txt_pack.setText(packSz.toString())
+                                    txt_status.setText(status)
+                                    txt_stock.setText(stock.toString())
+                                    txt_sku_name.setText(scan_bc.text.toString())
+                                    total_am.setText("")
+
+                                    scan_qty.setText("1")
+                                    scan_qty.requestFocus()
+                                    scan_qty.setSelectAllOnFocus(true)
+                                }
+                            }
+
+                        }
+                    } else {
                         Toast.makeText(this,"Not Found",Toast.LENGTH_SHORT).show()
+                        val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                        toneGen1.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000)
                         scan_bc.setText("")
                         scan_bc.requestFocus()
                     }
@@ -181,34 +235,88 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
         scan_bc.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
 
-            if (event.keyCode == KeyEvent.KEYCODE_SPACE && event.action == KeyEvent.ACTION_UP || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+            if (event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
 
-                if(scan_bc.text.toString() == ""){
-                    Toast.makeText(this,"Please Enter SKU",Toast.LENGTH_SHORT).show()
-                }
-
-                else{
+                println("OKOKOK")
+                if (scan_bc.text.toString() == "") {
+                    Toast.makeText(this, "Please Enter Barcode", Toast.LENGTH_SHORT).show()
+                } else {
                     sku = scan_bc.text.toString()
                     db.showDetail()
-                    if(ck == 1){
-                        txt_sku_qty.setText(sku_qty)
-                        txt_lc_qty.setText("")
-                        txt_pdName.setText(pdName)
-                        txt_cost.setText(cost.toString())
-                        txt_pack.setText(packSz.toString())
-                        txt_status.setText(status)
-                        txt_stock.setText(stock.toString())
-                        txt_sku_name.setText(scan_bc.text.toString())
-                        total_am.setText("")
+                    db.showTotalQty()
+                    println("OK1")
+                    if (ck == 1) {
 
-//                        scan_bc.setText("")
-                        scan_qty.setText("1")
-                        scan_qty.requestFocus()
-                        scan_qty.setSelectAllOnFocus(true)
-                    }
+                        println("OK2")
+                        if (status!!.length == 1) {
+                            txt_sku_qty.setText(sku_qty)
+                            txt_lc_qty.setText("")
+                            txt_pdName.setText(pdName)
+                            txt_cost.setText(cost.toString())
+                            txt_pack.setText(packSz.toString())
+                            txt_status.setText(status)
+                            txt_stock.setText(stock.toString())
+                            txt_sku_name.setText(scan_bc.text.toString())
+                            txt_sku_qty.setText(totalQty.toString())
+                            total_am.setText("")
 
-                    else{
-                        Toast.makeText(this,"Not Found",Toast.LENGTH_SHORT).show()
+                            scan_qty.setText("1")
+                            scan_qty.requestFocus()
+                            scan_qty.setSelectAllOnFocus(true)
+                            println("OK3")
+                        } else {
+                            println("OK4")
+                            if (status!!.length > 1) {
+                                println("OK5")
+                                println(status!!.substring(2, 4))
+                                if (status!!.substring(1) == "Non-Sales") {
+                                    Toast.makeText(this, "Barcode Non-Sales", Toast.LENGTH_SHORT)
+                                        .show()
+
+//                                    var mediaPlayer = MediaPlayer.create(applicationContext, R.raw.buzz)
+//                                    mediaPlayer.start()
+//                                    val handler = Handler()
+//                                    handler.postDelayed({ mediaPlayer.stop() }, 1 * 1000.toLong())\
+                                    AsyncTaskRunner(this).execute()
+
+                                    txt_sku_qty.setText(sku_qty)
+                                    txt_lc_qty.setText("")
+                                    txt_pdName.setText(pdName)
+                                    txt_cost.setText(cost.toString())
+                                    txt_pack.setText(packSz.toString())
+                                    txt_status.setText(status)
+                                    txt_stock.setText(stock.toString())
+                                    txt_sku_name.setText(scan_bc.text.toString())
+                                    total_am.setText("")
+
+                                    scan_qty.setText("1")
+                                    scan_qty.requestFocus()
+                                    scan_qty.setSelectAllOnFocus(true)
+//                                alertDialog1(status!!)
+
+                                } else {
+                                    println("OK6")
+                                    txt_sku_qty.setText(sku_qty)
+                                    txt_lc_qty.setText("")
+                                    txt_pdName.setText(pdName)
+                                    txt_cost.setText(cost.toString())
+                                    txt_pack.setText(packSz.toString())
+                                    txt_status.setText(status)
+                                    txt_stock.setText(stock.toString())
+                                    txt_sku_name.setText(scan_bc.text.toString())
+                                    total_am.setText("")
+
+                                    scan_qty.setText("1")
+                                    scan_qty.requestFocus()
+                                    scan_qty.setSelectAllOnFocus(true)
+                                }
+                            }
+                        }
+                    } else {
+                        println("Not found")
+                        Toast.makeText(this, "Not Found", Toast.LENGTH_SHORT).show()
+                        val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                        toneGen1.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                         scan_bc.setText("")
                         scan_bc.requestFocus()
                     }
@@ -224,33 +332,41 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
             if (event.keyCode == KeyEvent.KEYCODE_SPACE && event.action == KeyEvent.ACTION_UP || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
 
-                if(scan_bc.text.toString() == ""){
-                    Toast.makeText(this,"Please Enter BARCODE",Toast.LENGTH_SHORT).show()
+                if (scan_bc.text.toString() == "") {
+                    Toast.makeText(this, "Please Enter BARCODE", Toast.LENGTH_SHORT).show()
                     scan_bc.setText("")
-                }
-
-                else{
+                } else {
                     sku = scan_bc.text.toString()
-                    qty =scan_qty.text.toString()
+                    qty = scan_qty.text.toString()
                     filename = txt_doc.text.toString()
-                    updateCheck = "no"
-                    db.checkItem1()
 
-                    txt_sku_qty.setText(sku_qty)
-                    txt_lc_qty.setText(lc_qty)
-                    txt_pdName.setText(pdName)
-                    txt_cost.setText(cost.toString())
-                    txt_pack.setText(packSz.toString())
-                    txt_status.setText(status)
-                    txt_stock.setText(stock.toString())
-                    txt_sku_name.setText(scan_bc.text.toString())
-                    total_am.setText(lc_value)
+                    if (qty.toDouble() > 500) {
+                        Toast.makeText(this, "500", Toast.LENGTH_SHORT).show()
+                        alertDialog(qty)
+                    } else {
+                        updateCheck = "no"
+                        db.checkItem1()
+                        db.checkSeq()
+                        db.addItem1()
+                        db.summeryValue()
 
-                    scan_bc.setText("")
-                    scan_qty.setText("1")
-                    scan_bc.requestFocus()
-                    imgComplete.visibility = View.GONE
-                    imgImcomplete.visibility = View.VISIBLE
+                        txt_sku_qty.setText(sku_qty)
+                        txt_lc_qty.setText(lc_qty)
+                        txt_pdName.setText(pdName)
+                        txt_cost.setText(cost.toString())
+                        txt_pack.setText(packSz.toString())
+                        txt_status.setText(status)
+                        txt_stock.setText(stock.toString())
+                        txt_sku_name.setText(scan_bc.text.toString())
+                        total_am.setText(lc_value)
+
+                        scan_bc.setText("")
+                        scan_qty.setText("1")
+                        scan_bc.requestFocus()
+                        imgComplete.visibility = View.GONE
+                        imgImcomplete.visibility = View.VISIBLE
+                    }
+
                 }
             }
 
@@ -388,28 +504,27 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
             Handler().postDelayed({
 
-                val filepath="/sdcard/Stock Export/$doc_name.csv"
-                val file=File(filepath)
-                if(file.exists())
-                {
+                val filepath = "/sdcard/Stock Export/$doc_name.csv"
+                val file = File(filepath)
+                if (file.exists()) {
                     export()
 //                Toast.makeText(this, "FILE EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
 
-                }
-                else{
-                    generateNoteOnSD(this,"/$doc_name.csv")
-                    if(file.exists())
-                    {
+                } else {
+                    generateNoteOnSD(this, "/$doc_name.csv")
+                    if (file.exists()) {
                         export()
 //                    Toast.makeText(this, "FILE EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
-                    }
-
-                    else{
-                        Toast.makeText(this, "EXPORT UNSUCCESSFUL. MAKE SURE TO GIVE STORAGE ACCESS", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "EXPORT UNSUCCESSFUL. MAKE SURE TO GIVE STORAGE ACCESS",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                 }
-            },1000)
+            }, 1000)
 
 
         }
@@ -417,7 +532,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
     fun generateNoteOnSD(context: Context, sFileName: String) {
         try {
-            val root=File( "/sdcard/Stock Export")
+            val root=File("/sdcard/Stock Export")
             if (!root.exists()) {
                 root.mkdirs()
             }
@@ -466,37 +581,38 @@ class Check_stock_Multiscan : AppCompatActivity() {
                         }
                         if (j == 1) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 2) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 3) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 4) {
-
-                            bw.write(cursor!!.getString(j)+",")
+                            val formatted = java.lang.String.format("%04d", k)
+                            bw.write("$formatted,")
+//                            bw.write(cursor!!.getString(j)+",")
 
                         }
                         if (j == 5) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 6) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
                         if (j == 7) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
                         }
                         if (j == 8) {
 
@@ -522,7 +638,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                         }
                         if (j == 10) {
 
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
 
                         }
 
@@ -533,13 +649,13 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                 bw.write(",")
                             }
                             else {
-                                bw.write(cursor!!.getString(j)+",")
+                                bw.write(cursor!!.getString(j) + ",")
                             }
 
                         }
 
                         if (j == 12) {
-                            bw.write(cursor!!.getString(j)+",")
+                            bw.write(cursor!!.getString(j) + ",")
                         }
 
                         if (j == 13) {
@@ -553,30 +669,46 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
             }
             updateCheck = "yes"
+            filename = txt_doc.text.toString()
             db.updateStatus()
-            Toast.makeText(this,"EXPORT SUCCESSFUL",Toast.LENGTH_LONG).show()
+            println(location+ filename)
+            Toast.makeText(this, "EXPORT SUCCESSFUL", Toast.LENGTH_LONG).show()
             dialog.dismiss()
+            var filecountCheck = 0
+            val query = "SELECT seq FROM date WHERE date='${com.example.ui.DataBasrHandler.date}'"
+            val cursor1 = database.rawQuery(query,null)
+            if(cursor1.moveToLast()){
+                filecountCheck = cursor1.getInt(0)
+                println("FILE COUNT $filecountCheck    $countAlert")
+            }
+            else{
+                filecountCheck = 0
+                println("FILE COUNT $filecountCheck  $countAlert")
+            }
             database.close()
             imgImcomplete.visibility = View.GONE
             imgComplete.visibility = View.VISIBLE
-//            confirmDel()
 
-            if(requestBack == 1){
-                if(ck_activity == "0"){
-                    val a=Intent(this, ViewStock::class.java)
-                    a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(a)
-                }
-                else{
-                    val a=Intent(this, UserRecord::class.java)
-                    a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(a)
-                }
+            if(countAlert <= filecountCheck){
+                fileCountAlert(filecountCheck)
             }
             else{
+                if(requestBack == 1){
+                    if(ck_activity == "0"){
+                        val a=Intent(this, ViewStock::class.java)
+                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(a)
+                    }
+                    else{
+                        val a=Intent(this, UserRecord::class.java)
+                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(a)
+                    }
+                }
+                else{
 
+                }
             }
-
         }
         catch (ex: Exception) {
             ex.printStackTrace()
@@ -584,6 +716,40 @@ class Check_stock_Multiscan : AppCompatActivity() {
         }
 
     }
+
+    private fun fileCountAlert(v:Int){
+        lateinit var dialog: androidx.appcompat.app.AlertDialog
+
+        // Initialize a new instance of alert dialog builder object
+        val builder= androidx.appcompat.app.AlertDialog.Builder(this)
+
+        // Set a title for alert dialog
+        builder.setTitle("File Count Alert! ($countAlert)")
+
+        // Set a message for alert dialog
+        builder.setMessage("Total counted file is $v")
+
+
+        // On click listener for dialog buttons
+        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    dialog.dismiss()
+                }
+
+            }
+        }
+
+        // Set the alert dialog positive/yes button
+        builder.setPositiveButton("OK", dialogClickListener)
+
+        // Initialize the AlertDialog using builder object
+        dialog=builder.create()
+        dialog.setCancelable(false)
+        // Finally, display the alert dialog
+        dialog.show()
+    }
+
 
     private fun alertDialog(qty: kotlin.String){
         lateinit var dialog: androidx.appcompat.app.AlertDialog
@@ -602,10 +768,31 @@ class Check_stock_Multiscan : AppCompatActivity() {
         val dialogClickListener= DialogInterface.OnClickListener { _, which ->
             when (which) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    db.addDate()
-                    val intent = Intent(this,Check_stock_Multiscan::class.java)
-                    startActivity(intent)               }
+                    updateCheck = "no"
+                    db.checkItem1()
+                    db.checkSeq()
+                    db.addItem1()
+                    db.summeryValue()
+                    txt_sku_qty.setText(sku_qty)
+                    txt_lc_qty.setText(lc_qty)
+                    txt_pdName.setText(pdName)
+                    txt_cost.setText(cost.toString())
+                    txt_pack.setText(packSz.toString())
+                    txt_status.setText(status)
+                    txt_stock.setText(stock.toString())
+                    txt_sku_name.setText(scan_bc.text.toString())
+                    total_am.setText(lc_value)
+
+                    scan_bc.setText("")
+                    scan_qty.setText("1")
+                    scan_bc.requestFocus()
+                    imgComplete.visibility = View.GONE
+                    imgImcomplete.visibility = View.VISIBLE
+                }
                 DialogInterface.BUTTON_NEUTRAL -> {
+                    scan_qty.setText("1")
+                    scan_bc.setText("")
+                    scan_bc.requestFocus()
                     dialog.dismiss()
                 }
             }
@@ -615,8 +802,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
         builder.setPositiveButton("YES", dialogClickListener)
 
         // Set the alert dialog neutral/cancel button
-        builder.setNeutralButton("CANCEL", dialogClickListener)
-
+        builder.setNeutralButton("NO", dialogClickListener)
 
         // Initialize the AlertDialog using builder object
         dialog=builder.create()
@@ -625,12 +811,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
         dialog.show()
     }
 
-
-
     private fun dialog(){
         val builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
-        val view = inflater.inflate(R.layout.new_item,null)
+        val view = inflater.inflate(R.layout.new_item, null)
         builder.setView(view)
         val dialog: AlertDialog = builder.create()
 //        dialog.window?.attributes?.windowAnimations = R.style.DialogSlide
@@ -659,7 +843,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
             total_am.setText(lc_value)
 
             getTime()
-            val line = "$doc_name,$insp,$location,${sku},${edt_desc.text},0,${scan_qty.text.toString()},$formatted_date"
+            val line = "$doc_name,$usr,$location,${sku},${edt_desc.text},0,${scan_qty.text.toString()},$formatted_date"
             val sb = StringBuilder()
             var rest = 188 - line.length
             sb.append(line)
@@ -678,23 +862,28 @@ class Check_stock_Multiscan : AppCompatActivity() {
         }
     }
 
+    private fun loadCount(){
+        var prefs = getSharedPreferences("count", Activity.MODE_PRIVATE)
+        countAlert = prefs.getInt("valCount", 50)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
 
         if (id == R.id.action_edit) {
             db.getItem()
             if(itemDetail == " , , , , , , , , , , , ,"){
-                Toast.makeText(this,"No Scanned Data",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No Scanned Data", Toast.LENGTH_SHORT).show()
             }
             else{
-                val intent = Intent(this,Edit_Multistock::class.java)
+                val intent = Intent(this, Edit_Multistock::class.java)
                 startActivity(intent)
             }
             return true
         }
 
         if (id == R.id.action_save) {
-            exportDialog(R.style.DialogSlide,this)
+            exportDialog(R.style.DialogSlide, this)
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -710,7 +899,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
         if(updateCheck == "no"){
             requestBack = 1
-            exportDialog(R.style.DialogSlide,this)
+            exportDialog(R.style.DialogSlide, this)
         }
 
         else{
@@ -727,5 +916,34 @@ class Check_stock_Multiscan : AppCompatActivity() {
             }
             super.onBackPressed()
         }
+    }
+
+    private class AsyncTaskRunner(val context: Context?) : AsyncTask<String, String, String>() {
+
+
+        override fun doInBackground(vararg params: String?): String {
+
+            return "gg"
+        }
+
+        override fun onPreExecute() {
+            val afd: AssetFileDescriptor = context!!.assets.openFd("buzz.wav")
+            val player = MediaPlayer()
+            player.setDataSource(
+                afd.getFileDescriptor(),
+                afd.getStartOffset(),
+                afd.getLength()
+            )
+            player.prepare()
+            player.start()
+            val handler = Handler()
+            handler.postDelayed({ player.stop() }, 1 * 1000.toLong())
+            super.onPreExecute()
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+        }
+
     }
 }

@@ -550,6 +550,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text = ""
+                android:singleLine="true"
                 android:textSize="15dp"
                 android:gravity="right"
                 android:textColor="#000000"></TextView>

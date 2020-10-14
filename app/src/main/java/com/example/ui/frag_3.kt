@@ -23,9 +23,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.io.*
-import java.util.*
-import kotlin.collections.ArrayList
+import java.io.File
+import java.io.IOException
 
 var fileList = ArrayList<String>()
 
@@ -35,9 +34,6 @@ class Frag3: Fragment(){
     internal lateinit var serverIp: TextView
     internal lateinit var btnUpload: Button
     internal lateinit var txtSavedFiles:TextView
-    fun Fragment(){
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,13 +41,13 @@ class Frag3: Fragment(){
         savedInstanceState: Bundle?
     ): View? {
 
-        val view:View = inflater.inflate(R.layout.fragment_3,container,false)
+        val view:View = inflater.inflate(R.layout.fragment_3, container, false)
         serverIp = view.findViewById(R.id.ip)
         btnUpload = view.findViewById(R.id.btn_upload)
         txtSavedFiles = view.findViewById(R.id.saved_files)
         loadIp()
         serverIp.setText(ipa)
-        fileCount()
+//        fileCount()
 
 //        println(fileList.size)
 //        println(fileList[0])
@@ -64,36 +60,36 @@ class Frag3: Fragment(){
         return view
     }
 
-    fun fileCount() {
-        val files: Queue<File> = LinkedList()
-        files.addAll(File("/sdcard/Stock Export/").listFiles())
+//    fun fileCount() {
+//        val files: Queue<File> = LinkedList()
+//        files.addAll(File("/sdcard/Stock Export/").listFiles())
+//
+//
+//        while (!files.isEmpty()) {
+//            val file = files.remove()
+//            if (file.isDirectory) {
+//                files.addAll(file.listFiles())
+//            } else if (file.name.endsWith(".csv")) {
+//
+//
+//                val fs: FileInputStream = FileInputStream(file)
+//                val br: BufferedReader = BufferedReader(InputStreamReader(fs))
+//                var lines = br.readLine()
+//                if (lines == null) {
+//                    println("SCAN FAIL")
+//                    println(file.name+"NO")
+//
+//                }
+//                else {
+//                    fileList.add(file.name)
+//                    println(file.name+"YES")
+//
+//                }
+//            }
+//        }
+//    }
 
-
-        while (!files.isEmpty()) {
-            val file = files.remove()
-            if (file.isDirectory) {
-                files.addAll(file.listFiles())
-            } else if (file.name.endsWith(".csv")) {
-
-
-                val fs: FileInputStream = FileInputStream(file)
-                val br: BufferedReader = BufferedReader(InputStreamReader(fs))
-                var lines = br.readLine()
-                if (lines == null) {
-                    println("SCAN FAIL")
-                    println(file.name+"NO")
-
-                }
-                else {
-                    fileList.add(file.name)
-                    println(file.name+"YES")
-
-                }
-            }
-        }
-    }
-
-    private class AsyncTaskRunner(val fileuri: File,val context: Context?) : AsyncTask<String, String, String>() {
+    private class AsyncTaskRunner(val fileuri: File, val context: Context?) : AsyncTask<String, String, String>() {
         internal lateinit var pgd: ProgressDialog
 
         override fun doInBackground(vararg params: String?): String {
@@ -103,33 +99,34 @@ class Frag3: Fragment(){
                 var retrofit = builder.build()
                 var fileDownloadClient = retrofit.create(FileDownloadClient::class.java)
                 val uri = Uri.fromFile(File("/sdcard/Stock Export/${fileList[i]}"))
-                println("File Name"+uri)
+                println("File Name" + uri)
                 val originalFile = File(uri.toString())
-                println("OrFileName"+originalFile)
+                println("OrFileName" + originalFile)
 
                 var filepart = RequestBody.create(
                     MediaType.parse("csv/*"),
-                    File("/sdcard/Stock Export/${fileList[i]}"))
+                    File("/sdcard/Stock Export/${fileList[i]}")
+                )
 
-                var file = MultipartBody.Part.createFormData("file",originalFile.name,filepart )
+                var file = MultipartBody.Part.createFormData("file", originalFile.name, filepart)
 
                 val descriptionString = "product"
                 val description = RequestBody.create(
                     MultipartBody.FORM, descriptionString
                 )
 
-
-                var call: Call<ResponseBody?>? = fileDownloadClient.upload(file,description)
+                var call: Call<ResponseBody?>? = fileDownloadClient.upload(file, description)
                 call?.enqueue(object : Callback<ResponseBody?> {
                     override fun onResponse(
                         call: Call<ResponseBody?>?,
                         response: Response<ResponseBody?>
                     ) {
                         if (response.isSuccessful) {
-                            Toast.makeText(context,"Upload Started!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Upload Started!", Toast.LENGTH_SHORT).show()
 //                    val writtenToDisk: Boolean = writeResponseBodyToDisk(response.body())
                         } else {
-                            Toast.makeText(context,"Server return error!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Server return error!", Toast.LENGTH_SHORT)
+                                .show()
                             println("ERROR")
                         }
                     }
@@ -139,11 +136,18 @@ class Frag3: Fragment(){
                         t: Throwable?
                     ) {
                         if (t is IOException) {
-                            Toast.makeText(context, "this is an actual network failure :( inform the user and possibly retry", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(
+                                context,
+                                "this is an actual network failure :( inform the user and possibly retry",
+                                Toast.LENGTH_SHORT
+                            ).show();
                             // logging probably not necessary
-                        }
-                        else {
-                            Toast.makeText(context, "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "conversion issue! big problems :(",
+                                Toast.LENGTH_SHORT
+                            ).show();
                             // todo log to some central bug tracking service
                         }
                     }
@@ -178,7 +182,6 @@ class Frag3: Fragment(){
         }
 
     }
-
     private fun loadIp() {
         var prefs = context?.getSharedPreferences("ip", Activity.MODE_PRIVATE)
         ipa = prefs?.getString("valIp", "")

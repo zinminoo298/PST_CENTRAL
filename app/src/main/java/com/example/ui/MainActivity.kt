@@ -20,9 +20,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_2.view.*
 import net.vidageek.mirror.dsl.Mirror
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.*
 import java.util.*
 
 var address:Any = ""
@@ -46,11 +44,8 @@ class MainActivity : AppCompatActivity() {
 //        db.getFileDetail
 //        db.checkSaveFiles()
         AsyncLoadMain(this).execute()
+        db.checkDB()
         db.getTotalItems()
-        val root= File( "/storage/emulated/0/Stock Export/")
-        if (!root.exists()) {
-            root.mkdirs()
-        }
         initViews()
         setupViewPager()
 
@@ -329,6 +324,9 @@ class MainActivity : AppCompatActivity() {
             else {
                 db1.execSQL("DELETE FROM summery")
                 db1.execSQL("DELETE FROM date")
+                db1.execSQL("VACUUM")
+                deleteRecursive(File("/sdcard/Stock Export"))
+
             }
 
             if(All==null){
@@ -342,13 +340,25 @@ class MainActivity : AppCompatActivity() {
 
                 db1.execSQL("DELETE FROM summery")
                 db1.execSQL("DELETE FROM date")
-
+                db1.execSQL("VACUUM")
                 storeCode = ""
                 storeName = ""
                 stockTakeID = ""
                 BU = ""
+//                try {
+//                    val root=File("/sdcard/Stock Export")
+//                    if (root.exists()) {
+//                        println("DELETED")
+//                        root.delete()
+//                    }
+//                } catch (e: IOException) {
+//                    e.printStackTrace()
+//                }
+                deleteRecursive(File("/sdcard/Stock Export"))
             }
 
+            db.close()
+            db1.close()
             if(MASTER == null && Tran == null && All == null){
                 Toast.makeText(this,"Select one option", Toast.LENGTH_SHORT).show()
             }
@@ -366,6 +376,14 @@ class MainActivity : AppCompatActivity() {
 
         dialog= builder.create()
         dialog.show()
+    }
+    fun deleteRecursive(fileOrDirectory: File) {
+        if (fileOrDirectory.isDirectory) {
+            for (child in fileOrDirectory.listFiles()) {
+                deleteRecursive(child)
+            }
+        }
+        fileOrDirectory.delete()
     }
 
     private class AsyncLoadMain(val context: Context) : AsyncTask<String,String,String>(){
@@ -422,13 +440,13 @@ class MainActivity : AppCompatActivity() {
             pgd = ProgressDialog(context)
             pgd.setMessage("Restoring")
             pgd.setTitle("Restoring Master")
-            pgd.setButton(
-                DialogInterface.BUTTON_NEGATIVE,
-                "Cancel",
-                DialogInterface.OnClickListener { dialog, which ->
-                    running = false
-                    dialog.dismiss()
-                })
+//            pgd.setButton(
+//                DialogInterface.BUTTON_NEGATIVE,
+//                "Cancel",
+//                DialogInterface.OnClickListener { dialog, which ->
+//                    running = false
+//                    dialog.dismiss()
+//                })
             pgd.show()
             pgd.setCancelable(false)
 
@@ -490,7 +508,6 @@ class MainActivity : AppCompatActivity() {
             running = false
             Log.d("#DB", "completed..")
         }
-
     }
 
 }

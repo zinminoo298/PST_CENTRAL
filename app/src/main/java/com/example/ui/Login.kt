@@ -55,9 +55,6 @@ class Login : AppCompatActivity() {
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//            Toast.makeText(this, "Storage  Permission is Granted",
-//                Toast.LENGTH_SHORT).show();
-//            Summery
         } else {
             requestStoragePermission();
         }

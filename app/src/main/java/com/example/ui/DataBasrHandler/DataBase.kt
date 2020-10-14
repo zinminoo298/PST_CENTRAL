@@ -19,6 +19,7 @@ var totalItems = 0
 var rowSeq = 0
 var barcode:String = ""
 var ckItem = 0
+var checkdata = 0
 
 /*Get BU*/
 var stockTakeID = ""
@@ -58,6 +59,7 @@ var ibc:String=""
 var sbc:String=""
 var sku_bc:String =""
 var seq = 1
+var totalQty = 0
 
 /* View new Item Detail */
 var newitem:String? = ""
@@ -198,9 +200,22 @@ class DataBase(val context: Context){
 
     }
 
-//    fun addNewItem(){
-//
-//    }
+    fun checkDB(){
+        try{
+            val db = context.openOrCreateDatabase("database.db",Context.MODE_PRIVATE,null)
+            val query = "SELECT * FROM masters"
+            val cursor = db.rawQuery(query,null)
+            if(cursor.moveToFirst()){
+                checkdata = 1
+            }
+            else{
+                checkdata = 0
+            }
+        }catch(e:Exception){
+                checkdata = 0
+        }
+
+    }
 
     fun checkDatabase(){
         val db = context.openOrCreateDatabase("summery.db",Context.MODE_PRIVATE,null)
@@ -213,6 +228,9 @@ class DataBase(val context: Context){
             rowID = 1
         }
         checkItem1()
+        checkSeq()
+        addItem1()
+        summeryValue()
     }
 
     fun summeryValue(){
@@ -253,14 +271,16 @@ class DataBase(val context: Context){
         val db = context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
         val query = "SELECT * FROM masters WHERE BarcodeSBC='$sku'"
         val cursor = db.rawQuery(query, null)
+        val withoutstatus :String
         if (cursor.moveToFirst()) {
             pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
             stock = cursor.getString(cursor.getColumnIndex("Stock"))
             packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
-            status = cursor.getString(cursor.getColumnIndex("Status"))
+            withoutstatus = cursor.getString(cursor.getColumnIndex("Status"))
             cost = cursor.getString(cursor.getColumnIndex("Cost"))
             stockID = cursor.getString(cursor.getColumnIndex("CountName"))
             sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
+            status = withoutstatus.replace("\\s".toRegex(), "")
             sbc = sku!!
             ibc = "null"
             if (cost == null) {
@@ -271,6 +291,21 @@ class DataBase(val context: Context){
         else{
             ck = 0
         }
+        println("ck $ck")
+        db.close()
+    }
+
+    fun showTotalQty(){
+        val db = context.openOrCreateDatabase("summery.db", Context.MODE_PRIVATE, null)
+        val query = "SELECT SUM(QNT) as qty FROM summery WHERE Barcode='$sku'"
+        val cursor = db.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+           totalQty = cursor.getInt(0)
+        }
+        else{
+            totalQty = 0
+        }
+        println("ck $ck")
         db.close()
     }
 
@@ -278,23 +313,25 @@ class DataBase(val context: Context){
         val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
         val query = "SELECT * FROM masters WHERE BarcodeSBC='$sku'"
         val cursor = db.rawQuery(query,null)
+        val withoutstatus :String
         if(cursor.moveToFirst()){
             pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
             stock = cursor.getString(cursor.getColumnIndex("Stock"))
             packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
-            status = cursor.getString(cursor.getColumnIndex("Status"))
+            withoutstatus = cursor.getString(cursor.getColumnIndex("Status"))
             cost = cursor.getString(cursor.getColumnIndex("Cost"))
             stockID = cursor.getString(cursor.getColumnIndex("CountName"))
             sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
             sbc = sku!!
             ibc = cursor.getString(cursor.getColumnIndex("BarcodeIBC"))
+            status = withoutstatus.replace("\\s".toRegex(), "")
             if(cost == null){
                 cost = "0"
             }
             ckItem = 1
-            checkSeq()
-            addItem1()
-            summeryValue()
+//            checkSeq()
+//            addItem1()
+//            summeryValue()
         }
         else{
             val query = "SELECT * FROM masters WHERE BarcodeIBC='$sku'"
@@ -313,9 +350,9 @@ class DataBase(val context: Context){
                     cost = "0"
                 }
                 ckItem = 1
-                checkSeq()
-                addItem1()
-                summeryValue()
+//                checkSeq()
+//                addItem1()
+//                summeryValue()
 
             }
             else{
@@ -346,7 +383,7 @@ class DataBase(val context: Context){
         values.put("QNT", qty)
         values.put("Location", location)
         values.put("DocNum", filename)
-        values.put("Inspector", insp)
+        values.put("Inspector", usr)
         values.put("ProductName", pdName)
         values.put("SalePrice", cost)
         values.put("DateTime",date+" "+time)
@@ -398,7 +435,7 @@ class DataBase(val context: Context){
         values.put("qty", qty)
         values.put("location", location)
         values.put("filename", filename)
-        values.put("inspector", insp)
+        values.put("inspector", usr)
         values.put("description", desc)
         val id=db.insertWithOnConflict("summery", null, values, SQLiteDatabase.CONFLICT_IGNORE)
         if (id == -1L) {
@@ -917,6 +954,7 @@ class DataBase(val context: Context){
             else{
                 totalItems = 0
             }
+            db.close()
         }
         catch(e:Exception){
             Toast.makeText(context,"No master data found",Toast.LENGTH_SHORT).show()
@@ -1014,7 +1052,6 @@ class DataBase(val context: Context){
                     "$id,$stockid,$doc,$loc,$bc,$name,$prc,$qty,$stock,$pack,$status,$lcqty,$lcvalue"
             }
 
-
         }
     }
 
@@ -1081,6 +1118,7 @@ class DataBase(val context: Context){
     fun deleteFileRow(file:String){
         val db=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
         db.delete("date","name=?", arrayOf(file))
+        db.close()
 
     }
 

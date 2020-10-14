@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -110,45 +111,28 @@ class UserRecord : AppCompatActivity() {
                 }
 
                 else{
-                    if(scanCheck == 0){
-                        insp = inspector.text.toString()
-                        location = edtLocation.text.toString()
-                        date = db_date
-                        time = currentTime
-                        println(date+" "+time)
-                        db.checkDate()
-                        var formatseq =  String.format("%04d", fileSeq)
-                        doc_name="S$wifiMacAdds$Date$formatseq"
-                        name = doc_name
-                        updateCheck = "no"
-                        alertDialog(edtLocation.text.toString())
-//                        db.addDate()
-//                        val intent = Intent(this,Check_stock::class.java)
-//                        startActivity(intent)
-                    }
-                    else{
-                        insp = inspector.text.toString()
-                        location = edtLocation.text.toString()
-                        date = db_date
-                        time = currentTime
-                        println(date+" "+time)
-                        db.checkDate()
-                        updateCheck="no"
-                        var formatseq =  String.format("%04d", fileSeq)
-                        doc_name="Q$wifiMacAdds$Date$formatseq"
-                        name = doc_name
-                        alertDialog1(edtLocation.text.toString())
-//                        db.addDate()
-//                        val intent = Intent(this,Check_stock_Multiscan::class.java)
-//                        startActivity(intent)
-                    }
-
+                    btn_next.isFocusable = true
+                    btn_next.requestFocus()
                 }
             }
 
             false
 
         })
+
+        btn_next.setOnFocusChangeListener { v, hasFocus ->
+            if(v == btn_next){
+                if(hasFocus){
+//                    btn_next.setBackgroundColor(Color.BLACK)
+                    btn_next.setBackgroundResource(R.drawable.next_layout)
+                }
+                else{
+//                    btn_next.setBackgroundColor(Color.WHITE)
+                    btn_next.setBackgroundResource(R.drawable.nextstep)
+                }
+            }
+        }
+
         btn_next.setOnClickListener{
 
             if(edt_location.text.toString()=="")
@@ -164,16 +148,18 @@ class UserRecord : AppCompatActivity() {
                     location = edtLocation.text.toString()
                     date = db_date
                     time = currentTime
+                    val sub = time.substring(0,5)
+                    val formatTime = sub.replace(":","")
                     println(date+" "+time)
                     db.checkDate()
                     var formatseq =  String.format("%04d", fileSeq)
-                    doc_name="S$wifiMacAdds$Date$formatseq"
+                    doc_name="S$wifiMacAdds$Date$formatTime$location"
                     name = doc_name
                     updateCheck = "no"
-                    alertDialog(edtLocation.text.toString())
-//                    db.addDate()
-//                    val intent = Intent(this,Check_stock::class.java)
-//                    startActivity(intent)
+//                    alertDialog(edtLocation.text.toString())
+                    db.addDate()
+                    val intent = Intent(this,Check_stock::class.java)
+                    startActivity(intent)
 
                 }
                 else{
@@ -181,16 +167,18 @@ class UserRecord : AppCompatActivity() {
                     location = edtLocation.text.toString()
                     date = db_date
                     time = currentTime
+                    val sub = time.substring(0,5)
+                    val formatTime = sub.replace(":","")
                     println(date+" "+time)
                     updateCheck="no"
                     db.checkDate()
                     var formatseq =  String.format("%04d", fileSeq)
-                    doc_name="Q$wifiMacAdds$Date$formatseq"
+                    doc_name="Q$wifiMacAdds$Date$formatTime$location"
                     name = doc_name
-                    alertDialog1(edtLocation.text.toString())
-//                    db.addDate()
-//                    val intent = Intent(this,Check_stock_Multiscan::class.java)
-//                    startActivity(intent)
+//                    alertDialog1(edtLocation.text.toString())
+                    db.addDate()
+                    val intent = Intent(this,Check_stock_Multiscan::class.java)
+                    startActivity(intent)
 
                 }
 
@@ -203,28 +191,28 @@ class UserRecord : AppCompatActivity() {
 //        }
     }
 
-    fun datePicker(){
+        fun datePicker(){
 
-        val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
-        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            val c = Calendar.getInstance()
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+            val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
 
-            // Display Selected date in textbox
-            val mth = monthOfYear + 1
-            val date = "" + dayOfMonth + "/" + mth + "/" + year
-            val format = SimpleDateFormat("dd-MMM-yyyy")
-            val sdf = SimpleDateFormat("hh:mma")
+                // Display Selected date in textbox
+                val mth = monthOfYear + 1
+                val date = "" + dayOfMonth + "/" + mth + "/" + year
+                val format = SimpleDateFormat("dd-MMM-yyyy")
+                val sdf = SimpleDateFormat("hh:mma")
 
-            val date_format = SimpleDateFormat("yyyymmdd")
-            val curFormater = SimpleDateFormat("dd/MM/yyyy")
-            val dateObj = curFormater.parse(date)
+                val date_format = SimpleDateFormat("yyyymmdd")
+                val curFormater = SimpleDateFormat("dd/MM/yyyy")
+                val dateObj = curFormater.parse(date)
 
-            currentDate = date_format.format(dateObj)
-            currentDate1 = format.format(dateObj)
-            Date = currentDate
-            date_count.setText(currentDate1)
+                currentDate = date_format.format(dateObj)
+                currentDate1 = format.format(dateObj)
+                Date = currentDate
+                date_count.setText(currentDate1)
 //            if(currentDate == loadDate){
 //                formatted = String.format("%03d", date_seq)
 //                doc_no.setText(currentDate+formatted)
@@ -242,208 +230,197 @@ class UserRecord : AppCompatActivity() {
 //            date_count.setText(currentDate1)
 //            doc_no.setText(currentDate+ formatted)
 
-        }, year, month, day)
+            }, year, month, day)
 
-        dpd.show()
-    }
-
-    fun createFile(){
-        val root=File( "/sdcard/Stock Export")
-        if (!root.exists()) {
-            root.mkdirs()
+            dpd.show()
         }
 
-        val file = File("/sdcard/Stock Export")
-        val list: Array<File> = file.listFiles()
-        var count = 0
-        for (f in list) {
-            val name: kotlin.String = f.getName()
-            if (name.endsWith(".csv")) count++
-        }
-        println("170 $count")
-        var file_count = count
-        var fileseq=1
-        formatted = String.format("%03d", fileseq)
-        val filepath="/sdcard/Stock Export/$wifiMacAdds$Date$formatted.csv"
-        var filename=File(filepath)
-        var checkfile_seq = 0
-
-        for(i in 0..file_count){
-
-
-            if(filename.exists()){
-                fileseq++
-                formatted = String.format("%03d", fileseq)
-                filename =File( "/sdcard/Stock Export$wifiMacAdds$Date$formatted.csv")
-                println("Exists")
-            }
-
-            else{
-                generateNoteOnSD(this,"/$wifiMacAdds$Date$formatted.csv/")
-                doc_name = "$wifiMacAdds$Date$formatted.csv"
-                val saveFile = File("/sdcard/Stock Export/$doc_name")
-                val fw = FileWriter(saveFile.absoluteFile, true)
-                val bw = BufferedWriter(fw)
-                val line = "ROWID,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime"
-                val sb = StringBuilder()
-                var rest = 188 - line.length
-                sb.append(line)
-                for(i in 1..rest){
-                    sb.append(" ")
-                }
-//                bw.write(sb.toString() + "\r\n")
-                bw.flush()
-                checkfile_seq = 0
-                println("NEW")
-                setseq(fileseq+1)
-                break
-            }
-
-
-        }
-    }
-
-    fun generateNoteOnSD(context: Context, sFileName: kotlin.String) {
-        try {
+        fun createFile(){
             val root=File( "/sdcard/Stock Export")
             if (!root.exists()) {
                 root.mkdirs()
             }
-            val gpxfile=File(root, sFileName)
-            val writer= FileWriter(gpxfile)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
 
-    }
+            val file = File("/sdcard/Stock Export")
+            val list: Array<File> = file.listFiles()
+            var count = 0
+            for (f in list) {
+                val name: kotlin.String = f.getName()
+                if (name.endsWith(".csv")) count++
+            }
+            println("170 $count")
+            var file_count = count
+            var fileseq=1
+            formatted = String.format("%03d", fileseq)
+            val filepath="/sdcard/Stock Export/$wifiMacAdds$Date$formatted.csv"
+            var filename=File(filepath)
+            var checkfile_seq = 0
 
-    private fun alertDialog(location: kotlin.String){
-        lateinit var dialog: AlertDialog
-
-        // Initialize a new instance of alert dialog builder object
-        val builder= AlertDialog.Builder(this)
-
-        // Set a title for alert dialog
-        builder.setTitle("Confirm Location?")
-
-        // Set a message for alert dialog
-        builder.setMessage("Location : $location")
+            for(i in 0..file_count){
 
 
-        // On click listener for dialog buttons
-        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
-            when (which) {
-                DialogInterface.BUTTON_POSITIVE -> {
-                    db.addDate()
-                    val intent = Intent(this,Check_stock::class.java)
-                    startActivity(intent)                }
-                DialogInterface.BUTTON_NEUTRAL -> {
-                    dialog.dismiss()
+                if(filename.exists()){
+                    fileseq++
+                    formatted = String.format("%03d", fileseq)
+                    filename =File( "/sdcard/Stock Export$wifiMacAdds$Date$formatted.csv")
+                    println("Exists")
                 }
+
+                else{
+                    generateNoteOnSD(this,"/$wifiMacAdds$Date$formatted.csv/")
+                    doc_name = "$wifiMacAdds$Date$formatted.csv"
+                    val saveFile = File("/sdcard/Stock Export/$doc_name")
+                    val fw = FileWriter(saveFile.absoluteFile, true)
+                    val bw = BufferedWriter(fw)
+                    val line = "ROWID,StockTakeID,DocNum,Inspector,Location,Barcode,ProductName,SalePrice,QNT,DateTime"
+                    val sb = StringBuilder()
+                    var rest = 188 - line.length
+                    sb.append(line)
+                    for(i in 1..rest){
+                        sb.append(" ")
+                    }
+//                bw.write(sb.toString() + "\r\n")
+                    bw.flush()
+                    checkfile_seq = 0
+                    println("NEW")
+                    setseq(fileseq+1)
+                    break
+                }
+
+
             }
         }
 
-        // Set the alert dialog positive/yes button
-        builder.setPositiveButton("YES", dialogClickListener)
-
-        // Set the alert dialog neutral/cancel button
-        builder.setNeutralButton("CANCEL", dialogClickListener)
-
-
-        // Initialize the AlertDialog using builder object
-        dialog=builder.create()
-
-        // Finally, display the alert dialog
-        dialog.show()
-    }
-
-    private fun alertDialog1(location: kotlin.String){
-        lateinit var dialog: AlertDialog
-
-        // Initialize a new instance of alert dialog builder object
-        val builder= AlertDialog.Builder(this)
-
-        // Set a title for alert dialog
-        builder.setTitle("Confirm Location?")
-
-        // Set a message for alert dialog
-        builder.setMessage("Location : $location")
-
-
-        // On click listener for dialog buttons
-        val dialogClickListener= DialogInterface.OnClickListener { _, which ->
-            when (which) {
-                DialogInterface.BUTTON_POSITIVE -> {
-                    db.addDate()
-                    val intent = Intent(this,Check_stock_Multiscan::class.java)
-                    startActivity(intent)               }
-                DialogInterface.BUTTON_NEUTRAL -> {
-                    dialog.dismiss()
+        fun generateNoteOnSD(context: Context, sFileName: kotlin.String) {
+            try {
+                val root=File( "/sdcard/Stock Export")
+                if (!root.exists()) {
+                    root.mkdirs()
                 }
+                val gpxfile=File(root, sFileName)
+                val writer= FileWriter(gpxfile)
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
+
         }
 
-        // Set the alert dialog positive/yes button
-        builder.setPositiveButton("YES", dialogClickListener)
+        private fun alertDialog(location: kotlin.String){
+            lateinit var dialog: AlertDialog
 
-        // Set the alert dialog neutral/cancel button
-        builder.setNeutralButton("CANCEL", dialogClickListener)
+            // Initialize a new instance of alert dialog builder object
+            val builder= AlertDialog.Builder(this)
 
+            // Set a title for alert dialog
+            builder.setTitle("Confirm Location?")
 
-        // Initialize the AlertDialog using builder object
-        dialog=builder.create()
-
-        // Finally, display the alert dialog
-        dialog.show()
-    }
+            // Set a message for alert dialog
+            builder.setMessage("Location : $location")
 
 
-    private fun setseq( v: kotlin.Int) {
-        var editor=getSharedPreferences("seq", MODE_PRIVATE).edit()
-        editor.putInt("seq", v)
-        editor.apply()
-    }
+            // On click listener for dialog buttons
+            val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        db.addDate()
+                        val intent = Intent(this,Check_stock::class.java)
+                        startActivity(intent)                }
+                    DialogInterface.BUTTON_NEUTRAL -> {
+                        dialog.dismiss()
+                    }
+                }
+            }
 
-    private fun setdate(v: kotlin.String){
-        var editor = getSharedPreferences("date",MODE_PRIVATE).edit()
-        editor.putString("date", v)
-        editor.apply()
-    }
+            // Set the alert dialog positive/yes button
+            builder.setPositiveButton("YES", dialogClickListener)
 
-    private fun loadseq(){
-        var prefs = getSharedPreferences("seq", Context.MODE_PRIVATE)
-        var seq = prefs.getInt("seq",1)
-        date_seq = seq
+            // Set the alert dialog neutral/cancel button
+            builder.setNeutralButton("CANCEL", dialogClickListener)
 
-    }
 
-    private fun loaddate(){
-        var prefs = getSharedPreferences("date", Context.MODE_PRIVATE)
-        var date = prefs.getString("date","")
-        loadDate = date.toString()
-    }
+            // Initialize the AlertDialog using builder object
+            dialog=builder.create()
 
-    private fun loadMac() {
-        var prefs = getSharedPreferences("mac", Activity.MODE_PRIVATE)
-        mac = prefs.getString("valMac", "").toString()
-    }
+            // Finally, display the alert dialog
+            dialog.show()
+        }
 
-    override fun onBackPressed() {
+        private fun alertDialog1(location: kotlin.String){
+            lateinit var dialog: AlertDialog
+
+            // Initialize a new instance of alert dialog builder object
+            val builder= AlertDialog.Builder(this)
+
+            // Set a title for alert dialog
+            builder.setTitle("Confirm Location?")
+
+            // Set a message for alert dialog
+            builder.setMessage("Location : $location")
+
+
+            // On click listener for dialog buttons
+            val dialogClickListener= DialogInterface.OnClickListener { _, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        db.addDate()
+                        val intent = Intent(this,Check_stock_Multiscan::class.java)
+                        startActivity(intent)               }
+                    DialogInterface.BUTTON_NEUTRAL -> {
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+            // Set the alert dialog positive/yes button
+            builder.setPositiveButton("YES", dialogClickListener)
+
+            // Set the alert dialog neutral/cancel button
+            builder.setNeutralButton("CANCEL", dialogClickListener)
+
+
+            // Initialize the AlertDialog using builder object
+            dialog=builder.create()
+
+            // Finally, display the alert dialog
+            dialog.show()
+        }
+
+
+        private fun setseq( v: kotlin.Int) {
+            var editor=getSharedPreferences("seq", MODE_PRIVATE).edit()
+            editor.putInt("seq", v)
+            editor.apply()
+        }
+
+        private fun setdate(v: kotlin.String){
+            var editor = getSharedPreferences("date",MODE_PRIVATE).edit()
+            editor.putString("date", v)
+            editor.apply()
+        }
+
+        private fun loadseq(){
+            var prefs = getSharedPreferences("seq", Context.MODE_PRIVATE)
+            var seq = prefs.getInt("seq",1)
+            date_seq = seq
+
+        }
+
+        private fun loaddate(){
+            var prefs = getSharedPreferences("date", Context.MODE_PRIVATE)
+            var date = prefs.getString("date","")
+            loadDate = date.toString()
+        }
+
+        private fun loadMac() {
+            var prefs = getSharedPreferences("mac", Activity.MODE_PRIVATE)
+            mac = prefs.getString("valMac", "").toString()
+        }
+
+        override fun onBackPressed() {
             val a=Intent(this, MainActivity::class.java)
             a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(a)
-        super.onBackPressed()
+            super.onBackPressed()
+        }
+
     }
-
-//    override fun dispatchKeyEvent(KEvent: KeyEvent): Boolean {
-//        val keyaction = KEvent.action
-//        if (keyaction == KeyEvent.ACTION_DOWN) {
-//            val keycode = KEvent.keyCode
-//            val keyunicode = KEvent.getUnicodeChar(KEvent.metaState)
-//            val character = keyunicode.toChar()
-//            println("DEBUG MESSAGE KEY=$character KEYCODE=$keycode")
-//        }
-//        return super.dispatchKeyEvent(KEvent)
-//    }
-
-}

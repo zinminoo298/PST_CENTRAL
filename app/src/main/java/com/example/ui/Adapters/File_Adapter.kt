@@ -11,6 +11,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.ui.*
 import com.example.ui.DataBasrHandler.*
@@ -18,10 +19,12 @@ import com.example.ui.Modle.Detail
 import com.example.ui.Modle.FileDetail
 import com.example.ui.Modle.File_list
 import kotlinx.android.synthetic.main.rowview_1.view.*
+import java.io.File
+import java.io.IOException
 
 class File_Adapter(
     internal var stitem: MutableList<FileDetail>,
-     val context: Context
+    val context: Context
 
 ) : BaseAdapter() {
 
@@ -74,7 +77,7 @@ class File_Adapter(
             val builder= AlertDialog.Builder(context)
 
             // Set a title for alert dialog
-            builder.setTitle("Delete Location : ${com.example.ui.DataBasrHandler.barcode}")
+            builder.setTitle("Delete Location : ${stitem[position].file_lc}")
 
             // Set a message for alert dialog
             builder.setMessage("Are you sure??")
@@ -85,12 +88,25 @@ class File_Adapter(
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
 
+                        try {
+                            val root= File("/sdcard/Stock Export/${stitem[position].file_name}.csv")
+                            if (root.exists()) {
+                                println("DELETED")
+                                root.delete()
+                                Toast.makeText(context,"File Deleted",Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
                         db.deleteFileRow(stitem[position].file_name)
 //                        db.deleteRow(seItem[position].seq)
                         Details.clear( )
                         dialog.dismiss()
                         refresh(db.getFileDetail)
-                        txt1.setText("01")
+                        db.checkSaveFiles()
+//                        txt1.setText("01")
+                        txt1.setText(fileCount.toString())
+                        txt2.setText(fileSaved.toString())
                     }
                     DialogInterface.BUTTON_NEUTRAL -> {
                         dialog.dismiss()
@@ -102,7 +118,7 @@ class File_Adapter(
             builder.setPositiveButton("YES", dialogClickListener)
 
             // Set the alert dialog neutral/cancel button
-            builder.setNeutralButton("CANCEL", dialogClickListener)
+            builder.setNeutralButton("NO", dialogClickListener)
 
 
             // Initialize the AlertDialog using builder object

@@ -8,17 +8,19 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_setting.*
 import java.net.NetworkInterface
 import java.util.*
 
+var countAlert = 0
 
 class Setting : AppCompatActivity() {
 
     lateinit var masterIp: EditText
     lateinit var wifiMac: EditText
+    lateinit var fileCount:EditText
     lateinit var btnSave: Button
     private var mac =""
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,25 +28,31 @@ class Setting : AppCompatActivity() {
 
         loadIp()
         loadMac()
+        loadCount()
         getMac(this)
         getMacAddr()
 
         masterIp = findViewById(R.id.master_ip)
         wifiMac = findViewById(R.id.wifi_mac)
         btnSave = findViewById(R.id.btn_save)
+        fileCount = findViewById(R.id.edt_filecount)
 
         masterIp.setText(ipa)
         wifiMac.setText(wifiMacAdds)
+        fileCount.setText(countAlert.toString())
 
         btnSave.setOnClickListener {
             setIp(masterIp.text.toString())
             setMac(wifiMac.text.toString())
+            setCount(Integer.parseInt(fileCount.text.toString()))
             loadIp()
 
             val a=Intent(this, MainActivity::class.java)
             a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(a)
         }
+
+
 
     }
     fun getMac( context: Context): String {
@@ -105,7 +113,18 @@ class Setting : AppCompatActivity() {
 
     private fun loadMac() {
         var prefs = getSharedPreferences("mac", Activity.MODE_PRIVATE)
-         mac = prefs.getString("valMac", "").toString()
+        mac = prefs.getString("valMac", "").toString()
+    }
+
+    private fun setCount(v:Int){
+        var editor = getSharedPreferences("count", MODE_PRIVATE).edit()
+        editor.putInt("valCount", v)
+        editor.apply()
+    }
+
+    private fun loadCount(){
+        var prefs = getSharedPreferences("count", Activity.MODE_PRIVATE)
+        countAlert = prefs.getInt("valCount", 50)
     }
     override fun onBackPressed() {
 //        startActivity(Intent(applicationContext, MainActivity::class.java))
