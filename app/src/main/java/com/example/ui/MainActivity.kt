@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private var MASTER:String? = null
     private var Tran:String? = null
     private var All:String? = null
+    private var Backup:String? =  null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(getSupportFragmentManager())
         adapter.addFragment(Frag1(), "CHECK STOCK")
         adapter.addFragment(Frag2(this), "MASTER")
-        adapter.addFragment(Frag3(), "UPLOAD FILES")
+        adapter.addFragment(Frag3(this), "UPLOAD FILES")
 
         viewpager!!.adapter = adapter
         tabs!!.setupWithViewPager(viewpager)
@@ -238,7 +239,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun clearDialog(context: Context){
         lateinit var dialog: android.app.AlertDialog
-        val listItems=arrayOf("Master Data", "Scanned Data","All Data")
+        val listItems=arrayOf("Master Data", "Scanned Data","Backup Data","All Data")
         val builder= android.app.AlertDialog.Builder(this)
 
         val checkvalue=booleanArrayOf(
@@ -251,6 +252,7 @@ class MainActivity : AppCompatActivity() {
                 MASTER = "Master"
                 Tran = null
                 All = null
+                Backup = null
                 println(MASTER)
                 println(Tran)
                 println(All)
@@ -260,24 +262,38 @@ class MainActivity : AppCompatActivity() {
                 Tran = "Transaction_table"
                 MASTER = null
                 All = null
+                Backup = null
                 println(MASTER)
                 println(Tran)
                 println(All)
             }
 
             if (i== 2){
-                All = "Transaction_table"
+                All = null
                 Tran = null
-                MASTER = "Master"
+                MASTER = null
+                Backup = "Backup"
                 println(MASTER)
                 println(Tran)
                 println(All)
             }
 
-            if (i!=0 && i!=1 && i!=2){
+            if (i== 3){
+                All = "Transaction_table"
+                Tran = null
+                MASTER = "Master"
+                Backup = "Backup"
+                println(MASTER)
+                println(Tran)
+                println(All)
+            }
+
+            if (i!=0 && i!=1 && i!=2 && i!=3){
                 MASTER = null
                 Tran = null
                 All = null
+                Backup  = null
+
                 println(MASTER)
                 println(Tran)
                 println(All)
@@ -345,27 +361,27 @@ class MainActivity : AppCompatActivity() {
                 storeName = ""
                 stockTakeID = ""
                 BU = ""
-//                try {
-//                    val root=File("/sdcard/Stock Export")
-//                    if (root.exists()) {
-//                        println("DELETED")
-//                        root.delete()
-//                    }
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                }
                 deleteRecursive(File("/sdcard/Stock Export"))
+            }
+
+            if(Backup == null){
+                println("Backup is null")
+            }
+            else{
+                deleteRecursive(File("/sdcard/Backup"))
+
             }
 
             db.close()
             db1.close()
-            if(MASTER == null && Tran == null && All == null){
+            if(MASTER == null && Tran == null && All == null && Backup == null){
                 Toast.makeText(this,"Select one option", Toast.LENGTH_SHORT).show()
             }
 
             MASTER = null
             Tran = null
             All = null
+            Backup = null
 
             println(MASTER+Tran+All)
 

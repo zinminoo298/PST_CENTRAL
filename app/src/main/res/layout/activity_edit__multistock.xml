@@ -558,7 +558,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="COST"
+                android:text="RETAIL PRICE"
                 android:textAlignment="inherit"
                 android:textColor="#AD807D"
                 android:textSize="10dp"></TextView>

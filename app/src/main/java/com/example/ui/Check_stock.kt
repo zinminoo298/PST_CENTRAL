@@ -2,7 +2,6 @@ package com.example.ui
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -30,6 +29,7 @@ import com.example.ui.DataBasrHandler.*
 import com.example.ui.Modle.File_list
 import kotlinx.android.synthetic.main.check_stock.*
 import java.io.*
+import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -40,8 +40,6 @@ var requestBack = 0
 class Check_stock : AppCompatActivity() {
 
     internal lateinit var db: DataBase
-    var date:String? = ""
-    var formatted_date:String? = ""
 
     internal lateinit var txt_sku:TextView
     internal lateinit var edt_desc:EditText
@@ -88,9 +86,6 @@ class Check_stock : AppCompatActivity() {
         txt_sku_name.setText("")
         total_am.setText("")
 
-        val Lock:ImageView
-        val Unlock:ImageView
-
         db = DataBase(this)
         db.getBu()
         storename.setText(storeName)
@@ -103,7 +98,7 @@ class Check_stock : AppCompatActivity() {
         txt_doc.setText(doc_name)
         txt_lc.setText(location)
 
-        scan_bc.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        scan_bc.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
 
                 if (scan_bc.text.toString() == "") {
@@ -117,13 +112,14 @@ class Check_stock : AppCompatActivity() {
 
                     if (ckItem == 1) {
                         if (status!!.length == 1) {
+                            getTime()
                             db.checkSeq()
                             db.addItem1()
                             db.summeryValue()
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText(lc_qty)
                             txt_pdName.setText(pdName)
-                            txt_cost.setText(cost.toString())
+                            txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
                             txt_stock.setText(stock.toString())
@@ -169,7 +165,7 @@ class Check_stock : AppCompatActivity() {
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText(lc_qty)
                                     txt_pdName.setText(pdName)
-                                    txt_cost.setText(cost.toString())
+                                    txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -206,7 +202,7 @@ class Check_stock : AppCompatActivity() {
 
         })
 
-        scan_bc.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+        scan_bc.setOnKeyListener(View.OnKeyListener { _, _, event ->
 
             if (event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
 
@@ -228,7 +224,7 @@ class Check_stock : AppCompatActivity() {
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText(lc_qty)
                             txt_pdName.setText(pdName)
-                            txt_cost.setText(cost.toString())
+                            txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
                             txt_stock.setText(stock.toString())
@@ -273,7 +269,7 @@ class Check_stock : AppCompatActivity() {
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText(lc_qty)
                                     txt_pdName.setText(pdName)
-                                    txt_cost.setText(cost.toString())
+                                    txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -314,66 +310,30 @@ class Check_stock : AppCompatActivity() {
         })
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun readFromFile() {
-        var search: Int = 0
-        val file = File("/sdcard/Download/result.csv")
-        val fs: FileInputStream = FileInputStream(file)
-        val br: BufferedReader = BufferedReader(InputStreamReader(fs))
-        var lines = br.readLines()
-        for (line in lines) {
-            val array = line.split(",").toTypedArray()
-            println(array[0])
-            if (scan_bc.text.toString() == array[0]) {
-                array[1] = scan_qty.text.toString()
-                println(array[1])
-                search = 1
-                break
-            } else {
-                search = 0
-
-            }
-
-        }
-    }
-
     fun getTime(){
-        val time = SimpleDateFormat("hh:mma")
-        val curFormater = SimpleDateFormat("dd/MM/yyyy hh:mma")
-        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mma")
+        val sdf = SimpleDateFormat("hh:mma")
+        val dbdate_format = SimpleDateFormat("dd MMM")
+        val curFormater = SimpleDateFormat("dd/MM/yyyy/hh:mma")
+        val curFormater1 = SimpleDateFormat("dd/MM")
 
         val c = Calendar.getInstance()
         val day = c[Calendar.DAY_OF_MONTH]
         val month = c[Calendar.MONTH]
         val year = c[Calendar.YEAR]
-        val t = time.format(Date())
-        date = day.toString() + "/" + month + "/" + year+" "+t
-        val dateObj = curFormater.parse(date)
-        formatted_date = sdf.format(dateObj)
+        val t = sdf.format(Date())
+        val mth = month + 1
 
+        val date1 = "" + day + "/" + mth + "/" + year+"/"+t
+        val date2 = "" + day + "/" + mth
+        val dateObj = curFormater.parse(date1)
+        val dateObj1 = curFormater1.parse(date2)
 
-//        val curFormater = SimpleDateFormat("d/m/yyyy/hhmm")
-//        val dateObj = sdf.parse(date)
-//        currentDate = sdf.format(dateObj)
-//        println(currentDate)
+        date = dbdate_format.format(dateObj1)
+        time = sdf.format(dateObj)
     }
 
 
-    private fun writeToFile(
-        data: String, context: Context
-    ) {
-        try {
-            val saveFile = File("/sdcard/Stock Export/$doc_name")
-            val fw = FileWriter(saveFile.absoluteFile, true)
-            val bw = BufferedWriter(fw)
-            bw.write(data + "\r\n")
-            bw.flush()
 
-        } catch (e: IOException) {
-            Log.e("Exception", "File write failed: " + e.toString())
-        }
-    }
 
 //    private fun getListFiles2(parentDir: File): List<File>? {
 //        val inFiles: MutableList<File> = ArrayList()
@@ -392,37 +352,6 @@ class Check_stock : AppCompatActivity() {
 //        println(inFiles)
 //        return inFiles
 //    }
-
-    val Summery: MutableList<File_list>
-        get() {
-            val file1 = File("/sdcard/Download/result.csv")
-            val seItem = ArrayList<File_list>()
-            val inFiles: MutableList<File> = ArrayList()
-            val files: Queue<File> = LinkedList()
-            files.addAll(File("/sdcard/Download/").listFiles())
-
-
-            while (!files.isEmpty()) {
-                val file = files.remove()
-                if (file.isDirectory) {
-                    files.addAll(file.listFiles())
-                } else if (file.name.endsWith(".csv")) {
-
-
-                    val fs: FileInputStream = FileInputStream(file1)
-                    val br: BufferedReader = BufferedReader(InputStreamReader(fs))
-                    var lines = br.readLine()
-                    val array = lines.split(",").toTypedArray()
-
-                    val item = File_list()
-                    item.file_name = array[0]
-                    item.file_time = array[1]
-                    seItem.add(item)
-                    println(seItem[0].file_name)
-                }
-            }
-            return seItem
-        }
 
     private fun exportDialog(type: Int, context: Context) {
 
@@ -504,7 +433,7 @@ class Check_stock : AppCompatActivity() {
             val bw=BufferedWriter(fw)
             rowcount=cursor.getCount()
             colcount=cursor.getColumnCount()
-            bw.write("rowid,StockTakeID,DocNum,Inspector,SEQ,Location,SKU,BARCODE,IBC,SBC,ProductName,QNT,SalePrice,DateTime")
+            bw.write("rowid,StockTakeID,DocNum,Inspector,SEQ,Location,SKU,Barcode,IBC,SBC,ProductName,QNT,SalePrice,DateTime")
             bw.newLine()
 
             if (rowcount>0) {
@@ -649,7 +578,7 @@ class Check_stock : AppCompatActivity() {
                 }
             }
 
-//            confirmDel()
+            copyFile(File("/sdcard/Stock Export/$doc_name.csv"),File("/sdcard/Backup/$doc_name.csv"),File("/sdcard/Backup"))
 
         }
         catch (ex: Exception) {
@@ -657,6 +586,31 @@ class Check_stock : AppCompatActivity() {
 
         }
 
+    }
+
+    private fun copyFile(sourceFile:File, destFile:File, root:File){
+        if(!root.exists()){
+            root.mkdir()
+        }
+
+        if(!destFile.exists()){
+            destFile.createNewFile()
+        }
+        var source: FileChannel? = null
+        var destination: FileChannel? = null
+
+        try {
+            source = FileInputStream(sourceFile).channel
+            destination = FileOutputStream(destFile).channel
+            destination.transferFrom(source, 0, source.size())
+        } finally {
+            if (source != null) {
+                source.close()
+            }
+            if (destination != null) {
+                destination.close()
+            }
+        }
     }
 
     private fun fileCountAlert(v:Int){
@@ -715,7 +669,7 @@ class Check_stock : AppCompatActivity() {
                     txt_sku_qty.setText(sku_qty)
                     txt_lc_qty.setText(lc_qty)
                     txt_pdName.setText(pdName)
-                    txt_cost.setText(cost.toString())
+                    txt_cost.setText(retail.toString())
                     txt_pack.setText(packSz.toString())
                     txt_status.setText(com.example.ui.DataBasrHandler.status)
                     txt_stock.setText(stock.toString())
@@ -756,6 +710,7 @@ class Check_stock : AppCompatActivity() {
         var prefs = getSharedPreferences("count", Activity.MODE_PRIVATE)
         countAlert = prefs.getInt("valCount", 50)
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemid = item.itemId

@@ -27,6 +27,7 @@ import com.example.ui.DataBasrHandler.*
 import com.example.ui.Modle.File_list
 import kotlinx.android.synthetic.main.check_stock_multiscan.*
 import java.io.*
+import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -94,56 +95,6 @@ class Check_stock_Multiscan : AppCompatActivity() {
         storecode.setText(storeCode)
         bu.setText(BU)
         countid.setText("COUNT ID : " + stockTakeID)
-//
-//        Lock = findViewById(R.id.lock)
-//        Unlock = findViewById(R.id.unlock)
-
-//        Lock.setOnClickListener {
-//            scan_qty.isFocusable  = true
-//            scan_qty.isFocusableInTouchMode = true
-//            scan_qty.requestFocus()
-//            Lock.visibility = GONE
-//            Unlock.visibility = View.VISIBLE
-//        }
-//
-//        Unlock.setOnClickListener {
-//            scan_qty.isFocusable = false
-//            scan_qty.isFocusableInTouchMode = false
-//            Lock.visibility = View.VISIBLE
-//            Unlock.visibility = GONE
-//        }
-
-        /*Bottom Nav Bar actions*/
-//        val bottomnavigationview: BottomNavigationView = findViewById(R.id.bottom_navigation)
-//        bottomnavigationview.setOnNavigationItemSelectedListener { menuItem ->
-//
-//            when (menuItem.itemId) {
-//                R.id.action_clear -> {
-//                    exportDialog(R.style.DialogSlide,this)
-//
-//                }
-//
-//                R.id.action_edit -> {
-//                    val intent = Intent(this,Edit_stock::class.java)
-//                    startActivity(intent)
-//                }
-//
-//                R.id.action_back -> {
-//                    if(ck_activity == "0"){
-//                        val a=Intent(this, ViewStock::class.java)
-//                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                        startActivity(a)
-//                    }
-//                    else{
-//                        val a=Intent(this, UserRecord::class.java)
-//                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                        startActivity(a)
-//                    }                }
-//
-//            }
-//            true
-//
-//        }
 
         txt_doc.setText(doc_name)
         txt_lc.setText(location)
@@ -163,7 +114,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText("")
                             txt_pdName.setText(pdName)
-                            txt_cost.setText(cost.toString())
+                            txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
                             txt_stock.setText(stock.toString())
@@ -189,7 +140,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText("")
                                     txt_pdName.setText(pdName)
-                                    txt_cost.setText(cost.toString())
+                                    txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -205,7 +156,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText("")
                                     txt_pdName.setText(pdName)
-                                    txt_cost.setText(cost.toString())
+                                    txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -252,7 +203,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText("")
                             txt_pdName.setText(pdName)
-                            txt_cost.setText(cost.toString())
+                            txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
                             txt_stock.setText(stock.toString())
@@ -282,7 +233,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText("")
                                     txt_pdName.setText(pdName)
-                                    txt_cost.setText(cost.toString())
+                                    txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -299,7 +250,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText("")
                                     txt_pdName.setText(pdName)
-                                    txt_cost.setText(cost.toString())
+                                    txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -341,10 +292,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                     filename = txt_doc.text.toString()
 
                     if (qty.toDouble() > 500) {
-                        Toast.makeText(this, "500", Toast.LENGTH_SHORT).show()
                         alertDialog(qty)
                     } else {
                         updateCheck = "no"
+                        getTime()
                         db.checkItem1()
                         db.checkSeq()
                         db.addItem1()
@@ -353,7 +304,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                         txt_sku_qty.setText(sku_qty)
                         txt_lc_qty.setText(lc_qty)
                         txt_pdName.setText(pdName)
-                        txt_cost.setText(cost.toString())
+                        txt_cost.setText(retail.toString())
                         txt_pack.setText(packSz.toString())
                         txt_status.setText(status)
                         txt_stock.setText(stock.toString())
@@ -400,24 +351,25 @@ class Check_stock_Multiscan : AppCompatActivity() {
     }
 
     fun getTime(){
-        val time = SimpleDateFormat("hh:mma")
-        val curFormater = SimpleDateFormat("dd/MM/yyyy hh:mma")
-        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mma")
+        val sdf = SimpleDateFormat("hh:mma")
+        val dbdate_format = SimpleDateFormat("dd MMM")
+        val curFormater = SimpleDateFormat("dd/MM/yyyy/hh:mma")
+        val curFormater1 = SimpleDateFormat("dd/MM")
 
         val c = Calendar.getInstance()
         val day = c[Calendar.DAY_OF_MONTH]
         val month = c[Calendar.MONTH]
         val year = c[Calendar.YEAR]
-        val t = time.format(Date())
-        date = day.toString() + "/" + month + "/" + year+" "+t
-        val dateObj = curFormater.parse(date)
-        formatted_date = sdf.format(dateObj)
+        val t = sdf.format(Date())
+        val mth = month + 1
 
+        val date1 = "" + day + "/" + mth + "/" + year+"/"+t
+        val date2 = "" + day + "/" + mth
+        val dateObj = curFormater.parse(date1)
+        val dateObj1 = curFormater1.parse(date2)
 
-//        val curFormater = SimpleDateFormat("d/m/yyyy/hhmm")
-//        val dateObj = sdf.parse(date)
-//        currentDate = sdf.format(dateObj)
-//        println(currentDate)
+        com.example.ui.DataBasrHandler.date = dbdate_format.format(dateObj1)
+        time = sdf.format(dateObj)
     }
 
 
@@ -565,7 +517,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
             val bw=BufferedWriter(fw)
             rowcount=cursor.getCount()
             colcount=cursor.getColumnCount()
-            bw.write("rowid,StockTakeID,DocNum,Inspector,SEQ,Location,SKU,BARCODE,IBC,SBC,ProductName,QNT,SalePrice,DateTime")
+            bw.write("rowid,StockTakeID,DocNum,Inspector,SEQ,Location,SKU,Barcode,IBC,SBC,ProductName,QNT,SalePrice,DateTime")
             bw.newLine()
 
             if (rowcount>0) {
@@ -709,12 +661,38 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
                 }
             }
+            copyFile(File("/sdcard/Stock Export/$doc_name.csv"),File("/sdcard/Backup/$doc_name.csv"),File("/sdcard/Backup"))
         }
         catch (ex: Exception) {
             ex.printStackTrace()
 
         }
 
+    }
+
+    private fun copyFile(sourceFile:File, destFile:File, root:File){
+        if(!root.exists()){
+            root.mkdir()
+        }
+
+        if(!destFile.exists()){
+            destFile.createNewFile()
+        }
+        var source: FileChannel? = null
+        var destination: FileChannel? = null
+
+        try {
+            source = FileInputStream(sourceFile).channel
+            destination = FileOutputStream(destFile).channel
+            destination.transferFrom(source, 0, source.size())
+        } finally {
+            if (source != null) {
+                source.close()
+            }
+            if (destination != null) {
+                destination.close()
+            }
+        }
     }
 
     private fun fileCountAlert(v:Int){
@@ -776,7 +754,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                     txt_sku_qty.setText(sku_qty)
                     txt_lc_qty.setText(lc_qty)
                     txt_pdName.setText(pdName)
-                    txt_cost.setText(cost.toString())
+                    txt_cost.setText(retail.toString())
                     txt_pack.setText(packSz.toString())
                     txt_status.setText(status)
                     txt_stock.setText(stock.toString())

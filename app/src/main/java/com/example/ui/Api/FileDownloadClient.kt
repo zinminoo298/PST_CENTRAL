@@ -14,15 +14,15 @@ interface FileDownloadClient{
     fun downloadfile(): Call<ResponseBody>
 
     @Multipart
-    @POST("/api/files/upload_csv?type=product")
+    @POST("/api/files/upload_csv")
     fun upload(
-        @Part file: MultipartBody.Part?,
+        @Part  file: MultipartBody.Part?,
         @Part("type") type: RequestBody?
     ): Call<ResponseBody?>?
 
-    @POST("/api/files/")
+    @GET("/api/files/verify_upload")
     fun checkID(
-
-    )
-
+        @Query ("type") database:String,
+        @Query ("value") id:String
+    ):Call<ResponseBody>
 }

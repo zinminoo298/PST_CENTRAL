@@ -153,7 +153,7 @@ class UserRecord : AppCompatActivity() {
                     println(date+" "+time)
                     db.checkDate()
                     var formatseq =  String.format("%04d", fileSeq)
-                    doc_name="S$wifiMacAdds$Date$formatTime$location"
+                    doc_name="S$wifiMacAdds$stockTakeID$Date$formatTime$location"
                     name = doc_name
                     updateCheck = "no"
 //                    alertDialog(edtLocation.text.toString())
@@ -173,7 +173,7 @@ class UserRecord : AppCompatActivity() {
                     updateCheck="no"
                     db.checkDate()
                     var formatseq =  String.format("%04d", fileSeq)
-                    doc_name="Q$wifiMacAdds$Date$formatTime$location"
+                    doc_name="Q$wifiMacAdds$stockTakeID$Date$formatTime$location"
                     name = doc_name
 //                    alertDialog1(edtLocation.text.toString())
                     db.addDate()

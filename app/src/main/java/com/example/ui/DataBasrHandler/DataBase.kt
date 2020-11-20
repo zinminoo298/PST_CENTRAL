@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.ui.Modle.Detail
 import com.example.ui.Modle.FileDetail
+import com.example.ui.fileList
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -50,6 +51,7 @@ var stock:String? = ""
 var packSz:String? = ""
 var status:String? = ""
 var cost:String? = ""
+var retail:String? = ""
 var check:Int = 0
 var sku_qty :String = ""
 var lc_qty :String = ""
@@ -98,6 +100,7 @@ class DataBase(val context: Context){
     companion object{
         private val REAL_DATABASE="database.db"
         private val DATABASE_2 = "summery.db"
+        var stocktakeID = ""
 
     }
 
@@ -150,6 +153,16 @@ class DataBase(val context: Context){
         else{
             fileSeq = 1
         }
+
+        val db1 = context.openOrCreateDatabase(REAL_DATABASE,Context.MODE_PRIVATE,null)
+        val query1 = "SELECT CountName FROM masters"
+        val cursor1 = db1.rawQuery(query1,null)
+        if (cursor1.moveToFirst()){
+            stockTakeID = cursor1.getString(0)
+        }
+        else{
+            stockTakeID = ""
+        }
     }
 
     fun addDate(){
@@ -166,7 +179,8 @@ class DataBase(val context: Context){
         values.put("count",0)
         values.put("seq", fileSeq)
         values.put("updated", updateCheck)
-        val id=db.insertWithOnConflict("date", null, values, SQLiteDatabase.CONFLICT_IGNORE)
+        values.put("StockTakeID", stockTakeID)
+        db.insertWithOnConflict("date", null, values, SQLiteDatabase.CONFLICT_IGNORE)
         db.close()
     }
 
@@ -212,7 +226,7 @@ class DataBase(val context: Context){
                 checkdata = 0
             }
         }catch(e:Exception){
-                checkdata = 0
+            checkdata = 0
         }
 
     }
@@ -278,6 +292,7 @@ class DataBase(val context: Context){
             packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
             withoutstatus = cursor.getString(cursor.getColumnIndex("Status"))
             cost = cursor.getString(cursor.getColumnIndex("Cost"))
+            retail = cursor.getString(cursor.getColumnIndex("RetailPrice"))
             stockID = cursor.getString(cursor.getColumnIndex("CountName"))
             sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
             status = withoutstatus.replace("\\s".toRegex(), "")
@@ -285,6 +300,9 @@ class DataBase(val context: Context){
             ibc = "null"
             if (cost == null) {
                 cost = "0"
+            }
+            if (retail == null) {
+                retail = "0"
             }
             ck = 1
         }
@@ -300,7 +318,7 @@ class DataBase(val context: Context){
         val query = "SELECT SUM(QNT) as qty FROM summery WHERE Barcode='$sku'"
         val cursor = db.rawQuery(query, null)
         if (cursor.moveToFirst()) {
-           totalQty = cursor.getInt(0)
+            totalQty = cursor.getInt(0)
         }
         else{
             totalQty = 0
@@ -319,6 +337,7 @@ class DataBase(val context: Context){
             stock = cursor.getString(cursor.getColumnIndex("Stock"))
             packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
             withoutstatus = cursor.getString(cursor.getColumnIndex("Status"))
+            retail = cursor.getString(cursor.getColumnIndex("RetailPrice"))
             cost = cursor.getString(cursor.getColumnIndex("Cost"))
             stockID = cursor.getString(cursor.getColumnIndex("CountName"))
             sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
@@ -327,6 +346,9 @@ class DataBase(val context: Context){
             status = withoutstatus.replace("\\s".toRegex(), "")
             if(cost == null){
                 cost = "0"
+            }
+            if(retail == null){
+                retail = "0"
             }
             ckItem = 1
 //            checkSeq()
@@ -342,12 +364,16 @@ class DataBase(val context: Context){
                 packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
                 status = cursor.getString(cursor.getColumnIndex("Status"))
                 cost = cursor.getString(cursor.getColumnIndex("Cost"))
+                retail = cursor.getString(cursor.getColumnIndex("RetailPrice"))
                 stockID = cursor.getString(cursor.getColumnIndex("CountName"))
                 sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
                 ibc = sku!!
                 sbc= cursor.getString(cursor.getColumnIndex("BarcodeSBC"))
                 if (cost == null) {
                     cost = "0"
+                }
+                if (retail == null) {
+                    retail = "0"
                 }
                 ckItem = 1
 //                checkSeq()
@@ -386,6 +412,7 @@ class DataBase(val context: Context){
         values.put("Inspector", usr)
         values.put("ProductName", pdName)
         values.put("SalePrice", cost)
+        values.put("Retail", retail)
         values.put("DateTime",date+" "+time)
         values.put("StockTakeID", stockID)
         values.put("Stock", stock)
@@ -491,6 +518,7 @@ class DataBase(val context: Context){
                     packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
                     status = cursor.getString(cursor.getColumnIndex("Status"))
                     cost = cursor.getString(cursor.getColumnIndex("Cost"))
+                    retail = cursor.getString(cursor.getColumnIndex("RetailPrice"))
                     Log.e(ContentValues.TAG, DatabaseUtils.dumpCurrentRowToString(cursor))
                     check = 1
                 } while (cursor.moveToNext())
@@ -685,7 +713,7 @@ class DataBase(val context: Context){
                     loc = cursor.getString(4)
                     bc = cursor.getString(5)
                     name = cursor.getString(6)
-                    prc = cursor.getString(7)
+                    prc = cursor.getString(17)
                     qty = cursor.getString(8)
                     stock = cursor.getString(13)
                     pack = cursor.getString(14)
@@ -749,7 +777,7 @@ class DataBase(val context: Context){
                 loc = cursor.getString(4)
                 bc = cursor.getString(5)
                 name = cursor.getString(6)
-                prc = cursor.getString(7)
+                prc = cursor.getString(17)
                 qty = cursor.getString(8)
                 stock = cursor.getString(13)
                 pack = cursor.getString(14)
@@ -816,7 +844,7 @@ class DataBase(val context: Context){
                 loc = cursor.getString(4)
                 bc = cursor.getString(5)
                 name = cursor.getString(6)
-                prc = cursor.getString(7)
+                prc = cursor.getString(17)
                 qty = cursor.getString(8)
                 stock = cursor.getString(13)
                 pack = cursor.getString(14)
@@ -885,7 +913,7 @@ class DataBase(val context: Context){
                 loc = cursor.getString(4)
                 bc = cursor.getString(5)
                 name = cursor.getString(6)
-                prc = cursor.getString(7)
+                prc = cursor.getString(17)
                 qty = cursor.getString(8)
                 stock = cursor.getString(13)
                 pack = cursor.getString(14)
@@ -1028,7 +1056,7 @@ class DataBase(val context: Context){
                 loc = cursor.getString(4)
                 bc = cursor.getString(5)
                 name = cursor.getString(6)
-                prc = cursor.getString(7)
+                prc = cursor.getString(17)
                 qty = cursor.getString(8)
                 stock = cursor.getString(13)
                 pack = cursor.getString(14)
@@ -1119,7 +1147,36 @@ class DataBase(val context: Context){
         val db=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
         db.delete("date","name=?", arrayOf(file))
         db.close()
+    }
 
+    fun checkStockTakeID(){
+        val db = context.openOrCreateDatabase(REAL_DATABASE,Context.MODE_PRIVATE,null)
+        val query = "SELECT CountName FROM masters"
+        val cursor = db.rawQuery(query,null)
+        if(cursor.moveToFirst()){
+            stocktakeID = cursor.getString(0)
+        }
+        else{
+            stocktakeID = "false"
+        }
+    }
+
+    fun totalfileCheck(){
+        val db=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
+        val query = "SELECT name FROM date WHERE StockTakeID='$stocktakeID'"
+        val cursor = db.rawQuery(query,null)
+        if(cursor.moveToFirst()){
+            do{
+                fileList.add(cursor.getString(0))
+            }
+            while (cursor.moveToNext())
+
+        }
+        else{
+            fileList.clear()
+        }
+//        println("${fileList[0]} , ${fileList[1]}")
+//        println(fileList.size)
     }
 
 }
