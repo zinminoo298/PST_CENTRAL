@@ -1,4 +1,4 @@
-package com.example.ui
+package com.example.pst
 
 import android.app.ProgressDialog
 import android.content.Context
@@ -10,7 +10,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.example.ui.DataBasrHandler.*
+import com.example.pst.DataBaseHandler.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_edit__multistock.*
 import kotlinx.android.synthetic.main.activity_edit__multistock.id
@@ -85,9 +85,9 @@ class Edit_Multistock : AppCompatActivity() {
         txt_status.setText(itemArray[10])
         txtlc_qty.setText(itemArray[11])
         totalam.setText(itemArray[12])
-        txt_seq.setText("${com.example.ui.DataBasrHandler.quantity} / ${com.example.ui.DataBasrHandler.quantity}")
+        txt_seq.setText("${com.example.pst.DataBaseHandler.quantity} / ${com.example.pst.DataBaseHandler.quantity}")
         txtsku_qty.requestFocus()
-        ck_qty = com.example.ui.DataBasrHandler.quantity
+        ck_qty = com.example.pst.DataBaseHandler.quantity
 //        AsyncTaskRunner(this).execute()
 
         btnFirst.setOnClickListener {
@@ -109,12 +109,12 @@ class Edit_Multistock : AppCompatActivity() {
                 totalam.setText(itemArray[12])
                 txtsku_qty.requestFocus()
 
-                if(com.example.ui.DataBasrHandler.quantity == 0){
-                    txt_seq.setText("0 / ${com.example.ui.DataBasrHandler.quantity}")
+                if(com.example.pst.DataBaseHandler.quantity == 0){
+                    txt_seq.setText("0 / ${com.example.pst.DataBaseHandler.quantity}")
                     ck_qty= 0
                 }
                 else{
-                    txt_seq.setText("1 / ${com.example.ui.DataBasrHandler.quantity}")
+                    txt_seq.setText("1 / ${com.example.pst.DataBaseHandler.quantity}")
                     ck_qty= 1
                 }
 
@@ -140,10 +140,10 @@ class Edit_Multistock : AppCompatActivity() {
                 txt_status.setText(itemArray[10])
                 txtlc_qty.setText(itemArray[11])
                 totalam.setText(itemArray[12])
-                txt_seq.setText("${com.example.ui.DataBasrHandler.quantity} / ${com.example.ui.DataBasrHandler.quantity}")
+                txt_seq.setText("${com.example.pst.DataBaseHandler.quantity} / ${com.example.pst.DataBaseHandler.quantity}")
                 txtsku_qty.requestFocus()
 
-                ck_qty = com.example.ui.DataBasrHandler.quantity
+                ck_qty = com.example.pst.DataBaseHandler.quantity
 
             } catch (ex: IOException) {
                 println("Error Occurs")
@@ -171,15 +171,15 @@ class Edit_Multistock : AppCompatActivity() {
 
 
                 val back_qty = ck_qty-1
-                if(com.example.ui.DataBasrHandler.quantity <= 1){
-                    txt_seq.setText("${com.example.ui.DataBasrHandler.quantity} / ${com.example.ui.DataBasrHandler.quantity}")
+                if(com.example.pst.DataBaseHandler.quantity <= 1){
+                    txt_seq.setText("${com.example.pst.DataBaseHandler.quantity} / ${com.example.pst.DataBaseHandler.quantity}")
                 }
                 else{
                     if(back_qty< 1){
-                        txt_seq.setText("${ck_qty} / ${com.example.ui.DataBasrHandler.quantity}")
+                        txt_seq.setText("${ck_qty} / ${com.example.pst.DataBaseHandler.quantity}")
                     }
                     else{
-                        txt_seq.setText("${back_qty} / ${com.example.ui.DataBasrHandler.quantity}")
+                        txt_seq.setText("${back_qty} / ${com.example.pst.DataBaseHandler.quantity}")
                         ck_qty = back_qty
                     }
                 }
@@ -209,15 +209,15 @@ class Edit_Multistock : AppCompatActivity() {
                 txtsku_qty.requestFocus()
 
                 val next_qty = ck_qty+1
-                if(com.example.ui.DataBasrHandler.quantity <= 1){
-                    txt_seq.setText("${com.example.ui.DataBasrHandler.quantity} / ${com.example.ui.DataBasrHandler.quantity}")
+                if(com.example.pst.DataBaseHandler.quantity <= 1){
+                    txt_seq.setText("${com.example.pst.DataBaseHandler.quantity} / ${com.example.pst.DataBaseHandler.quantity}")
                 }
                 else{
-                    if(next_qty> com.example.ui.DataBasrHandler.quantity){
-                        txt_seq.setText("${ck_qty} / ${com.example.ui.DataBasrHandler.quantity}")
+                    if(next_qty> com.example.pst.DataBaseHandler.quantity){
+                        txt_seq.setText("${ck_qty} / ${com.example.pst.DataBaseHandler.quantity}")
                     }
                     else{
-                        txt_seq.setText("${next_qty} / ${com.example.ui.DataBasrHandler.quantity}")
+                        txt_seq.setText("${next_qty} / ${com.example.pst.DataBaseHandler.quantity}")
                         ck_qty = next_qty
                     }
                 }
@@ -257,13 +257,13 @@ class Edit_Multistock : AppCompatActivity() {
                             txtlc_qty.setText(itemArray[11])
                             totalam.setText(itemArray[12])
 
-                            if (ck_qty != com.example.ui.DataBasrHandler.quantity) {
-                                txt_seq.setText("$ck_qty / ${com.example.ui.DataBasrHandler.quantity}")
+                            if (ck_qty != com.example.pst.DataBaseHandler.quantity) {
+                                txt_seq.setText("$ck_qty / ${com.example.pst.DataBaseHandler.quantity}")
                             }
-                            if (ck_qty == com.example.ui.DataBasrHandler.quantity) {
-                                txt_seq.setText("${ck_qty} / ${com.example.ui.DataBasrHandler.quantity}")
+                            if (ck_qty == com.example.pst.DataBaseHandler.quantity) {
+                                txt_seq.setText("${ck_qty} / ${com.example.pst.DataBaseHandler.quantity}")
                             }
-                            if (com.example.ui.DataBasrHandler.quantity == 0) {
+                            if (com.example.pst.DataBaseHandler.quantity == 0) {
                                 txt_seq.setText("0 / 0")
                             }
                         }
@@ -286,7 +286,7 @@ class Edit_Multistock : AppCompatActivity() {
                                 txt_status.setText(itemArray[10])
                                 txtlc_qty.setText(itemArray[11])
                                 totalam.setText(itemArray[12])
-                                txt_seq.setText("${com.example.ui.DataBasrHandler.quantity} / ${com.example.ui.DataBasrHandler.quantity}")
+                                txt_seq.setText("${com.example.pst.DataBaseHandler.quantity} / ${com.example.pst.DataBaseHandler.quantity}")
                             }
                             if (nextCheck == 0) {
                                 txt_seq.setText("0 / 0")
@@ -317,7 +317,7 @@ class Edit_Multistock : AppCompatActivity() {
                 }
 
                 R.id.action_save -> {
-                    if (com.example.ui.DataBasrHandler.quantity == 0) {
+                    if (com.example.pst.DataBaseHandler.quantity == 0) {
                         Toast.makeText(this, "No data to edit", Toast.LENGTH_SHORT).show()
                     } else {
                         updateQty = txtQuantity.text.toString()

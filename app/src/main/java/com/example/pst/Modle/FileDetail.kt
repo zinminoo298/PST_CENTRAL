@@ -1,4 +1,4 @@
-package com.example.ui.Modle
+package com.example.pst.Modle
 
 class FileDetail{
 

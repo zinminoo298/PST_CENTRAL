@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ui">
+    package="com.example.pst">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -23,36 +23,38 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Edit_Multistock"
+        <activity android:name="com.example.pst.Edit_Multistock"
             android:label="Multi Edit"
-            android:parentActivityName=".Check_stock_Multiscan"></activity>
-        <activity android:name=".Edit_stock"
+            android:parentActivityName="com.example.pst.Check_stock_Multiscan"></activity>
+        <activity android:name="com.example.pst.Edit_stock"
             android:label="Single Edit"
-            android:parentActivityName=".Check_stock"/>
-        <activity android:name=".Setting" />
-        <activity android:name=".ViewStock"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".List" />
+            android:parentActivityName="com.example.pst.Check_stock"/>
+        <activity android:name="com.example.pst.Setting" />
+        <activity android:name="com.example.pst.ViewStock"
+            android:parentActivityName="com.example.pst.MainActivity"/>
+        <activity android:name="com.example.pst.List" />
         <activity
-            android:name=".UserRecord"
+            android:name="com.example.pst.UserRecord"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Check_stock"
+            android:name="com.example.pst.Check_stock"
             android:label="Single Count"
-            android:parentActivityName=".UserRecord"
+            android:parentActivityName="com.example.pst.UserRecord"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Check_stock_Multiscan"
+            android:name="com.example.pst.Check_stock_Multiscan"
             android:label="Multi Count"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Login">
+        <activity android:name="com.example.pst.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.pst.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:windowSoftInputMode="adjustPan">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->

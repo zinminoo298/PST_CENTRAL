@@ -1,10 +1,10 @@
-package com.example.ui
+package com.example.pst
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.ui.Adapters.File_Adapter
-import com.example.ui.Modle.FileDetail
-import com.example.ui.Modle.File_list
+import com.example.pst.Adapters.File_Adapter
+import com.example.pst.Modle.FileDetail
+import com.example.pst.Modle.File_list
 import kotlinx.android.synthetic.main.activity_list.*
 import java.io.File
 import java.util.*

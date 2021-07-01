@@ -1,4 +1,4 @@
-package com.example.ui
+package com.example.pst
 
 import android.app.Activity
 import android.content.Context
@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_setting.*
 import java.net.NetworkInterface
 import java.util.*
 

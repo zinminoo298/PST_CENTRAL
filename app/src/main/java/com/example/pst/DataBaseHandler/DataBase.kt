@@ -1,4 +1,4 @@
-package com.example.ui.DataBasrHandler
+package com.example.pst.DataBaseHandler
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -7,14 +7,14 @@ import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import android.widget.Toast
-import com.example.ui.Modle.Detail
-import com.example.ui.Modle.FileDetail
-import com.example.ui.fileList
+import com.example.pst.Modle.Detail
+import com.example.pst.Modle.FileDetail
+import com.example.pst.fileList
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.Exception
-import kotlin.math.cos
+
 var ck = 0
 var totalItems = 0
 var rowSeq = 0
@@ -155,7 +155,7 @@ class DataBase(val context: Context){
         }
 
         val db1 = context.openOrCreateDatabase(REAL_DATABASE,Context.MODE_PRIVATE,null)
-        val query1 = "SELECT CountName FROM masters"
+        val query1 = "SELECT CountName FROM pdamasters"
         val cursor1 = db1.rawQuery(query1,null)
         if (cursor1.moveToFirst()){
             stockTakeID = cursor1.getString(0)
@@ -196,7 +196,7 @@ class DataBase(val context: Context){
         else{
             try{
                 val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-                val query = "SELECT * FROM masters WHERE BarcodeIBC='$sku'"
+                val query = "SELECT * FROM pdamasters WHERE BarcodeIBC='$sku'"
                 val cur = db.rawQuery(query,null)
 
                 if(cur.moveToFirst()){
@@ -217,7 +217,7 @@ class DataBase(val context: Context){
     fun checkDB(){
         try{
             val db = context.openOrCreateDatabase("database.db",Context.MODE_PRIVATE,null)
-            val query = "SELECT * FROM masters"
+            val query = "SELECT * FROM pdamasters"
             val cursor = db.rawQuery(query,null)
             if(cursor.moveToFirst()){
                 checkdata = 1
@@ -283,7 +283,7 @@ class DataBase(val context: Context){
 
     fun showDetail() {
         val db = context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-        val query = "SELECT * FROM masters WHERE BarcodeSBC='$sku'"
+        val query = "SELECT * FROM pdamasters WHERE BarcodeSBC='$sku'"
         val cursor = db.rawQuery(query, null)
         val withoutstatus :String
         if (cursor.moveToFirst()) {
@@ -329,7 +329,7 @@ class DataBase(val context: Context){
 
     fun checkItem1(){
         val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-        val query = "SELECT * FROM masters WHERE BarcodeSBC='$sku'"
+        val query = "SELECT * FROM pdamasters WHERE BarcodeSBC='$sku'"
         val cursor = db.rawQuery(query,null)
         val withoutstatus :String
         if(cursor.moveToFirst()){
@@ -356,7 +356,7 @@ class DataBase(val context: Context){
 //            summeryValue()
         }
         else{
-            val query = "SELECT * FROM masters WHERE BarcodeIBC='$sku'"
+            val query = "SELECT * FROM pdamasters WHERE BarcodeIBC='$sku'"
             val cursor = db.rawQuery(query,null)
             if(cursor.moveToFirst()) {
                 pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
@@ -508,7 +508,7 @@ class DataBase(val context: Context){
         try{
             val db = context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
             val selectQuery =
-                "SELECT * FROM masters WHERE BarcodeIBC = '$sku'"
+                "SELECT * FROM pdamasters WHERE BarcodeIBC = '$sku'"
             val cursor = db.rawQuery(selectQuery, null)
             if (cursor.moveToFirst()) {
 
@@ -974,7 +974,7 @@ class DataBase(val context: Context){
     fun getTotalItems(){
         try{
             val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-            val query = "SELECT count(id) as id FROM masters"
+            val query = "SELECT count(id) as id FROM pdamasters"
             val cursor = db.rawQuery(query,null)
             if(cursor.moveToFirst()){
                 totalItems = cursor.getInt(0)
@@ -1086,7 +1086,7 @@ class DataBase(val context: Context){
     fun getBu(){
         try{
             val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-            val query = "SELECT * FROM masters"
+            val query = "SELECT * FROM pdamasters"
             val cursor = db.rawQuery(query,null)
 
             if(cursor.moveToFirst()){
@@ -1098,7 +1098,7 @@ class DataBase(val context: Context){
                 if(storeName == "Null"){ storeName = ""}
             }
 
-            val query1 = "SELECT * FROM master_businesses"
+            val query1 = "SELECT * FROM pdamaster_businesses"
             val cursor1 = db.rawQuery(query1,null)
             if(cursor1.moveToFirst()){
                 BU = cursor1.getString(2)
@@ -1151,7 +1151,7 @@ class DataBase(val context: Context){
 
     fun checkStockTakeID(){
         val db = context.openOrCreateDatabase(REAL_DATABASE,Context.MODE_PRIVATE,null)
-        val query = "SELECT CountName FROM masters"
+        val query = "SELECT CountName FROM pdamasters"
         val cursor = db.rawQuery(query,null)
         if(cursor.moveToFirst()){
             stocktakeID = cursor.getString(0)

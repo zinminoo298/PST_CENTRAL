@@ -61,9 +61,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.2"
-                android:text="15/9/2020"
+                android:text=""
                 android:textColor="#FFFFFF"
-                android:textSize="32dp"
+                android:textSize="28dp"
                 android:gravity="center"></TextView>
 
         </LinearLayout>

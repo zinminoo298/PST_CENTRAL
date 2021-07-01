@@ -1,16 +1,13 @@
-package com.example.ui
+package com.example.pst
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ListView
-import com.example.ui.Adapters.Detail_Adapter
-import com.example.ui.Adapters.File_Adapter
-import com.example.ui.DataBasrHandler.DataBase
-import com.example.ui.DataBasrHandler.Detail
-import com.example.ui.DataBasrHandler.filename
-import com.example.ui.DataBasrHandler.location
-import com.example.ui.Modle.Detail
+import com.example.pst.Adapters.Detail_Adapter
+import com.example.pst.Adapters.File_Adapter
+import com.example.pst.DataBaseHandler.*
+import com.example.pst.Modle.Detail
 import kotlinx.android.synthetic.main.activity_view_stock.*
 
 class ViewStock : AppCompatActivity() {
@@ -48,6 +45,9 @@ class ViewStock : AppCompatActivity() {
 
     override fun onBackPressed() {
         Detail.clear()
+        Details.clear()
+        Frag1.adapter = File_Adapter(Frag1.stItem, this)
+        Frag1.adapter.refresh(db.getFileDetail)
         val a=Intent(this, MainActivity::class.java)
         a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(a)

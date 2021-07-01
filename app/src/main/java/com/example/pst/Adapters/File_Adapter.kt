@@ -1,6 +1,5 @@
-package com.example.ui.Adapters
+package com.example.pst.Adapters
 
-import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -10,14 +9,11 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.example.ui.*
-import com.example.ui.DataBasrHandler.*
-import com.example.ui.Modle.Detail
-import com.example.ui.Modle.FileDetail
-import com.example.ui.Modle.File_list
+import com.example.pst.*
+import com.example.pst.DataBaseHandler.*
+import com.example.pst.Modle.FileDetail
 import kotlinx.android.synthetic.main.rowview_1.view.*
 import java.io.File
 import java.io.IOException

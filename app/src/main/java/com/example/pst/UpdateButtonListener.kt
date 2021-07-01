@@ -1,4 +1,4 @@
-package com.example.ui
+package com.example.pst
 
 interface UpdateButtonListener {
     fun onUpdate(status: Boolean)

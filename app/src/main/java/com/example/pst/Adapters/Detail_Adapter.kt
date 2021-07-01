@@ -1,17 +1,15 @@
-package com.example.ui.Adapters
+package com.example.pst.Adapters
 
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import com.example.ui.Check_stock
-import com.example.ui.DataBasrHandler.*
-import com.example.ui.Modle.Detail
-import com.example.ui.R
+import com.example.pst.DataBaseHandler.*
+import com.example.pst.Modle.Detail
+import com.example.pst.R
 import kotlinx.android.synthetic.main.rowview_2.view.*
 
 class Detail_Adapter(
