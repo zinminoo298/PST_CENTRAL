@@ -2,11 +2,13 @@ package com.example.pst
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.AssetFileDescriptor
 import android.media.AudioManager
+import android.media.Image
 import android.media.MediaPlayer
 import android.media.ToneGenerator
 import android.os.AsyncTask
@@ -45,6 +47,9 @@ class Check_stock : AppCompatActivity() {
     internal lateinit var mTopToolbar: Toolbar
     internal lateinit var imgComplete:ImageView
     internal lateinit var imgImcomplete:ImageView
+    internal lateinit var imgPrev:Button
+    internal lateinit var imgNext:Button
+    internal lateinit var checkBox: CheckBox
 
     private var progressBar1: ProgressBar? =null
     internal lateinit var dialog: AlertDialog
@@ -58,7 +63,11 @@ class Check_stock : AppCompatActivity() {
         requestBack = 2
         imgComplete = findViewById(R.id.complete)
         imgImcomplete = findViewById(R.id.imcomplete)
+        imgNext = findViewById(R.id.img_next)
+        imgPrev = findViewById(R.id.img_prv)
+        checkBox = findViewById(R.id.ckbox)
         loadCount()
+//        getDate()
 
         if(updateCheck == "no"){
             imgComplete.visibility = GONE
@@ -67,6 +76,56 @@ class Check_stock : AppCompatActivity() {
         else{
             imgImcomplete.visibility = GONE
             imgComplete.visibility = VISIBLE
+        }
+
+        if(checkBox.isChecked){
+            imgPrev.isEnabled = true
+            imgNext.isEnabled = true
+            txt_lc.isEnabled = false
+            txt_lc.isFocusable = false
+            txt_lc.isFocusableInTouchMode = false
+        }
+        else{
+            imgPrev.isEnabled = false
+            imgNext.isEnabled = false
+            txt_lc.isEnabled = true
+            txt_lc.isFocusable = true
+            txt_lc.isFocusableInTouchMode = true
+        }
+
+        checkBox.setOnClickListener {
+            if(checkBox.isChecked){
+                imgPrev.isEnabled = true
+                imgNext.isEnabled = true
+                txt_lc.isEnabled = false
+                txt_lc.isFocusable = false
+                txt_lc.isFocusableInTouchMode = false
+            }
+            else{
+                imgPrev.isEnabled = false
+                imgNext.isEnabled = false
+                txt_lc.isEnabled = true
+                txt_lc.isFocusable = true
+                txt_lc.isFocusableInTouchMode = true
+            }
+        }
+
+        img_calendar.setOnClickListener {
+            if(txt_pdName.text == ""){
+                Toast.makeText(this,"Please Scan Barcode",Toast.LENGTH_SHORT).show()
+            }
+            else{
+                datePicker()
+            }
+        }
+
+        btn_update.setOnClickListener {
+            if(txt_pdName.text == ""){
+                Toast.makeText(this,"Please scan barcode",Toast.LENGTH_SHORT).show()
+            }
+            else{
+                db.updateExp(edt_notes.text.toString(),txt_date.text.toString() )
+            }
         }
 
         mTopToolbar = findViewById(R.id.my_toolbar)
@@ -80,7 +139,7 @@ class Check_stock : AppCompatActivity() {
         txt_pack.setText("")
         txt_status.setText("")
         txt_stock.setText("")
-        txt_sku_name.setText("")
+//        txt_sku_name.setText("")
         total_am.setText("")
 
         db = DataBase(this)
@@ -118,11 +177,15 @@ class Check_stock : AppCompatActivity() {
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText(lc_qty)
                             txt_pdName.setText(pdName)
+                            txt_color.setText(color)
+                            txt_size.setText(size)
+                            txt_date.setText(exp)
+                            edt_notes.setText(note)
                             txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
                             txt_stock.setText(stock.toString())
-                            txt_sku_name.setText(sku)
+//                            txt_sku_name.setText(sku)
                             total_am.setText(lc_value)
                             scan_bc.setText("")
                             scan_bc.requestFocus()
@@ -134,26 +197,6 @@ class Check_stock : AppCompatActivity() {
                                 if (status!!.substring(1) == "Non-Sales") {
                                     Toast.makeText(this, "Barcode Non-Sales", Toast.LENGTH_LONG)
                                         .show()
-
-//                                    var mediaPlayer = MediaPlayer.create(
-//                                        applicationContext,
-//                                        R.raw.buzz
-//                                    )
-//                                    mediaPlayer.start()
-//                                    val handler = Handler()
-//                                    handler.postDelayed({ mediaPlayer.stop() }, 1 * 1000.toLong())
-
-//                                    val afd: AssetFileDescriptor = assets.openFd("buzz.wav")
-//                                    val player = MediaPlayer()
-//                                    player.setDataSource(
-//                                        afd.getFileDescriptor(),
-//                                        afd.getStartOffset(),
-//                                        afd.getLength()
-//                                    )
-//                                    player.prepare()
-//                                    player.start()
-//                                    val handler = Handler()
-//                                    handler.postDelayed({ player.stop() }, 1 * 1000.toLong())
                                     alertDialog1(status!!)
                                     AsyncTaskRunner(this).execute()
 
@@ -164,11 +207,15 @@ class Check_stock : AppCompatActivity() {
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText(lc_qty)
                                     txt_pdName.setText(pdName)
+                                    txt_color.setText(color)
+                                    txt_size.setText(size)
+                                    txt_date.setText(exp)
+                                    edt_notes.setText(note)
                                     txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
-                                    txt_sku_name.setText(sku)
+//                                    txt_sku_name.setText(sku)
                                     total_am.setText(lc_value)
                                     scan_bc.setText("")
                                     scan_bc.requestFocus()
@@ -186,7 +233,11 @@ class Check_stock : AppCompatActivity() {
                         txt_pack.setText("")
                         txt_status.setText("")
                         txt_stock.setText("")
-                        txt_sku_name.setText(scan_bc.text.toString())
+                        txt_color.setText("")
+                        txt_size.setText("")
+                        txt_date.setText("")
+                        edt_notes.setText("")
+//                        txt_sku_name.setText(scan_bc.text.toString())
                         total_am.setText("")
                         scan_bc.setText("")
                         scan_bc.requestFocus()
@@ -218,16 +269,20 @@ class Check_stock : AppCompatActivity() {
                     if (ckItem == 1) {
                         if (status!!.length == 1) {
                             db.checkSeq()
-                            db.addItem1()
-                            db.summeryValue()
+                            db.addItem1() /* add data to database */
+                            db.summeryValue() /* show summery data from database */
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText(lc_qty)
                             txt_pdName.setText(pdName)
+                            txt_color.setText(color)
+                            txt_size.setText(size)
+                            txt_date.setText(exp)
+                            edt_notes.setText(note)
                             txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
                             txt_stock.setText(stock.toString())
-                            txt_sku_name.setText(sku)
+//                            txt_sku_name.setText(sku)
                             total_am.setText(lc_value)
                             scan_bc.setText("")
                             scan_bc.requestFocus()
@@ -239,20 +294,24 @@ class Check_stock : AppCompatActivity() {
                                 if (status!!.substring(1) == "Non-Sales") {
                                     Toast.makeText(this, "Barcode Non-Sales", Toast.LENGTH_LONG)
                                         .show()
-                                    alertDialog1(status!!)
-                                    AsyncTaskRunner(this).execute()
+                                    alertDialog1(status!!) /* non-sales detected and show dialog to continue*/
+                                    AsyncTaskRunner(this).execute() /* alarm sound on background thread*/
                                 } else {
                                     db.checkSeq()
                                     db.addItem1()
                                     db.summeryValue()
                                     txt_sku_qty.setText(sku_qty)
                                     txt_lc_qty.setText(lc_qty)
+                                    txt_color.setText(color)
+                                    txt_size.setText(size)
+                                    txt_date.setText(exp)
+                                    edt_notes.setText(note)
                                     txt_pdName.setText(pdName)
                                     txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
-                                    txt_sku_name.setText(sku)
+//                                    txt_sku_name.setText(sku)
                                     total_am.setText(lc_value)
                                     scan_bc.setText("")
                                     scan_bc.requestFocus()
@@ -270,7 +329,11 @@ class Check_stock : AppCompatActivity() {
                         txt_pack.setText("")
                         txt_status.setText("")
                         txt_stock.setText("")
-                        txt_sku_name.setText(scan_bc.text.toString())
+                        txt_color.setText("")
+                        txt_size.setText("")
+                        txt_date.setText("")
+                        edt_notes.setText("")
+//                        txt_sku_name.setText(scan_bc.text.toString())
                         total_am.setText("")
                         scan_bc.setText("")
                         scan_bc.requestFocus()
@@ -278,15 +341,57 @@ class Check_stock : AppCompatActivity() {
                         val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
                         toneGen1.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                     }
-
-//                    }
-
                 }
             }
-
             false
 
         })
+    }
+
+    fun getDate(){
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val mth = month + 1
+        val date = "" + day + "/" + mth + "/" + year
+        val curFormater = SimpleDateFormat("dd/mm/yyyy")
+        val dateObj = curFormater.parse(date)
+        currentDate1 = curFormater.format(dateObj)
+        txt_date.text = currentDate1
+    }
+
+    fun datePicker(){
+
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+
+            // Display Selected date in textbox
+            val mth = monthOfYear + 1
+            val date = "" + dayOfMonth + "/" + mth + "/" + year
+            val format = SimpleDateFormat("dd-MMM-yyyy")
+            val sdf = SimpleDateFormat("hh:mma")
+
+            val date_format = SimpleDateFormat("yyyymmdd")
+            val curFormater = SimpleDateFormat("dd/mm/yyyy")
+            val dateObj = curFormater.parse(date)
+
+            currentDate = date_format.format(dateObj)
+            currentDate1 = curFormater.format(dateObj)
+            Date = currentDate1
+            txt_date.text = Date
+        }, year, month, day)
+        if(exp != ""){
+            val y = Integer.parseInt(exp.takeLast(4))
+            val d = Integer.parseInt(exp.take(2))
+            val m = Integer.parseInt(exp.substring(3,5))
+            dpd.updateDate(y,m-1,d)
+        }
+        dpd.show()
+
     }
 
     fun getTime(){
@@ -652,7 +757,7 @@ class Check_stock : AppCompatActivity() {
                     txt_pack.setText(packSz.toString())
                     txt_status.setText(com.example.pst.DataBaseHandler.status)
                     txt_stock.setText(stock.toString())
-                    txt_sku_name.setText(scan_bc.text.toString())
+//                    txt_sku_name.setText(scan_bc.text.toString())
                     total_am.setText(lc_value)
                     scan_bc.setText("")
                     scan_bc.requestFocus()
@@ -721,13 +826,13 @@ class Check_stock : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-
-        if(updateCheck == "no"){
-            requestBack = 1
-            exportDialog(R.style.DialogSlide, this)
-        }
-
-        else{
+//
+//        if(updateCheck == "no"){
+//            requestBack = 1
+//            exportDialog(R.style.DialogSlide, this)
+//        }
+//
+//        else{
             requestBack =0
             if(ck_activity == "0"){
                 val a=Intent(this, ViewStock::class.java)
@@ -740,7 +845,7 @@ class Check_stock : AppCompatActivity() {
                 startActivity(a)
             }
             super.onBackPressed()
-        }
+//        }
     }
 
     private class AsyncTaskRunner(val context: Context?) : AsyncTask<String, String, String>() {

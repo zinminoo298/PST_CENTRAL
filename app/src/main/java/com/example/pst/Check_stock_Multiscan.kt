@@ -25,7 +25,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.example.pst.DataBaseHandler.*
 import com.example.pst.Modle.File_list
+import kotlinx.android.synthetic.main.check_stock.*
 import kotlinx.android.synthetic.main.check_stock_multiscan.*
+import kotlinx.android.synthetic.main.check_stock_multiscan.bu
+import kotlinx.android.synthetic.main.check_stock_multiscan.countid
+import kotlinx.android.synthetic.main.check_stock_multiscan.scan_bc
+import kotlinx.android.synthetic.main.check_stock_multiscan.scan_qty
+import kotlinx.android.synthetic.main.check_stock_multiscan.storecode
+import kotlinx.android.synthetic.main.check_stock_multiscan.storename
+import kotlinx.android.synthetic.main.check_stock_multiscan.total_am
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_cost
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_doc
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_lc
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_lc_qty
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_pack
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_pdName
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_sku_qty
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_status
+import kotlinx.android.synthetic.main.check_stock_multiscan.txt_stock
 import java.io.*
 import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
@@ -114,6 +131,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                             txt_sku_qty.setText(sku_qty)
                             txt_lc_qty.setText("")
                             txt_pdName.setText(pdName)
+                            txt_color.setText(color)
+                            txt_size.setText(size)
+                            txt_date.setText(exp)
+                            edt_notes.setText(note)
                             txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
@@ -143,6 +164,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
+                                    txt_color.setText(color)
+                                    txt_size.setText(size)
+                                    txt_date.setText(exp)
+                                    edt_notes.setText(note)
                                     txt_stock.setText(stock.toString())
                                     txt_sku_name.setText(sku)
                                     total_am.setText("")
@@ -159,6 +184,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_cost.setText(retail.toString())
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
+                                    txt_color.setText(color)
+                                    txt_size.setText(size)
+                                    txt_date.setText(exp)
+                                    edt_notes.setText(note)
                                     txt_stock.setText(stock.toString())
                                     txt_sku_name.setText(sku)
                                     total_am.setText("")
@@ -206,6 +235,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                             txt_cost.setText(retail.toString())
                             txt_pack.setText(packSz.toString())
                             txt_status.setText(status)
+                            txt_color.setText(color)
+                            txt_size.setText(size)
+                            txt_date.setText(exp)
+                            edt_notes.setText(note)
                             txt_stock.setText(stock.toString())
                             txt_sku_name.setText(sku)
                             txt_sku_qty.setText(totalQty.toString())
@@ -234,6 +267,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_lc_qty.setText("")
                                     txt_pdName.setText(pdName)
                                     txt_cost.setText(retail.toString())
+                                    txt_color.setText(color)
+                                    txt_size.setText(size)
+                                    txt_date.setText(exp)
+                                    edt_notes.setText(note)
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -251,6 +288,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                                     txt_lc_qty.setText("")
                                     txt_pdName.setText(pdName)
                                     txt_cost.setText(retail.toString())
+                                    txt_color.setText(color)
+                                    txt_size.setText(size)
+                                    txt_date.setText(exp)
+                                    edt_notes.setText(note)
                                     txt_pack.setText(packSz.toString())
                                     txt_status.setText(status)
                                     txt_stock.setText(stock.toString())
@@ -304,6 +345,10 @@ class Check_stock_Multiscan : AppCompatActivity() {
                         txt_sku_qty.setText(sku_qty)
                         txt_lc_qty.setText(lc_qty)
                         txt_pdName.setText(pdName)
+                        txt_color.setText(color)
+                        txt_size.setText(size)
+                        txt_date.setText(exp)
+                        edt_notes.setText(note)
                         txt_cost.setText(retail.toString())
                         txt_pack.setText(packSz.toString())
                         txt_status.setText(status)
@@ -875,12 +920,12 @@ class Check_stock_Multiscan : AppCompatActivity() {
 
     override fun onBackPressed() {
 
-        if(updateCheck == "no"){
-            requestBack = 1
-            exportDialog(R.style.DialogSlide, this)
-        }
+//        if(updateCheck == "no"){
+//            requestBack = 1
+//            exportDialog(R.style.DialogSlide, this)
+//        }
 
-        else{
+//        else{
             requestBack =0
             if(ck_activity == "0"){
                 val a=Intent(this, ViewStock::class.java)
@@ -893,7 +938,7 @@ class Check_stock_Multiscan : AppCompatActivity() {
                 startActivity(a)
             }
             super.onBackPressed()
-        }
+//        }
     }
 
     private class AsyncTaskRunner(val context: Context?) : AsyncTask<String, String, String>() {

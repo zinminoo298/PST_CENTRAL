@@ -22,7 +22,6 @@ interface FileDownloadClient{
 
     @GET("/api/files/verify_upload")
     fun checkID(
-        @Query ("type") database:String,
-        @Query ("value") id:String
+        @Query ("countName") id:String
     ):Call<ResponseBody>
 }

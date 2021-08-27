@@ -89,18 +89,25 @@ class Frag3(context: Context?): Fragment(){
             var retrofit = builder.build()
             var fileDownloadClient = retrofit.create(FileDownloadClient::class.java)
             println(stocktakeID)
-            var call:Call<ResponseBody> = fileDownloadClient.checkID("master", "$stocktakeID")
+            var call:Call<ResponseBody> = fileDownloadClient.checkID( "$stocktakeID")
 
             call?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
+//                    val jsonObject = JSONObject(response.body()!!.string())
+//                    println(jsonObject)
                     if (response.isSuccessful) {
                         val jsonObject = JSONObject(response.body()!!.string())
                         if (jsonObject.toString() == "{\"exist\":true}") {
                             jsonStock = "true"
-                            AsyncTaskRunner(context,pgd).execute()
+                            Toast.makeText(
+                                context,
+                                "StockTakeID match",
+                                Toast.LENGTH_SHORT
+                            ).show()
+//                            AsyncTaskRunner(context,pgd).execute()
                         } else {
                             jsonStock = "false"
                             Toast.makeText(

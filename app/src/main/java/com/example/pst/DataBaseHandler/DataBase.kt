@@ -57,6 +57,10 @@ var sku_qty :String = ""
 var lc_qty :String = ""
 var lc_value:String =""
 var stockID:String=""
+var color:String = ""
+var size:String = ""
+var exp:String = ""
+var note:String = ""
 var ibc:String=""
 var sbc:String=""
 var sku_bc:String =""
@@ -93,6 +97,8 @@ val Detail = ArrayList<Detail>()
 val Location = ArrayList<String>()
 
 var itemDetail:String = ""
+
+var docsArray = ArrayList<String>()
 
 
 class DataBase(val context: Context){
@@ -155,7 +161,7 @@ class DataBase(val context: Context){
         }
 
         val db1 = context.openOrCreateDatabase(REAL_DATABASE,Context.MODE_PRIVATE,null)
-        val query1 = "SELECT CountName FROM pdamasters"
+        val query1 = "SELECT countName FROM stocktakes"
         val cursor1 = db1.rawQuery(query1,null)
         if (cursor1.moveToFirst()){
             stockTakeID = cursor1.getString(0)
@@ -217,7 +223,7 @@ class DataBase(val context: Context){
     fun checkDB(){
         try{
             val db = context.openOrCreateDatabase("database.db",Context.MODE_PRIVATE,null)
-            val query = "SELECT * FROM pdamasters"
+            val query = "SELECT * FROM pda_masters"
             val cursor = db.rawQuery(query,null)
             if(cursor.moveToFirst()){
                 checkdata = 1
@@ -283,18 +289,18 @@ class DataBase(val context: Context){
 
     fun showDetail() {
         val db = context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-        val query = "SELECT * FROM pdamasters WHERE BarcodeSBC='$sku'"
+        val query = "SELECT * FROM pda_masters WHERE BarcodeIBC='$sku'"
         val cursor = db.rawQuery(query, null)
         val withoutstatus :String
         if (cursor.moveToFirst()) {
-            pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
-            stock = cursor.getString(cursor.getColumnIndex("Stock"))
-            packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
-            withoutstatus = cursor.getString(cursor.getColumnIndex("Status"))
-            cost = cursor.getString(cursor.getColumnIndex("Cost"))
-            retail = cursor.getString(cursor.getColumnIndex("RetailPrice"))
-            stockID = cursor.getString(cursor.getColumnIndex("CountName"))
-            sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
+            pdName = cursor.getString(cursor.getColumnIndex("productName"))
+            stock = cursor.getString(cursor.getColumnIndex("stock"))
+            packSz = cursor.getString(cursor.getColumnIndex("packSize"))
+            withoutstatus = cursor.getString(cursor.getColumnIndex("status"))
+            cost = cursor.getString(cursor.getColumnIndex("cost"))
+            retail = cursor.getString(cursor.getColumnIndex("retailPrice"))
+            stockID = cursor.getString(cursor.getColumnIndex("stocktakeId"))
+            sku_bc = cursor.getString(cursor.getColumnIndex("sku"))
             status = withoutstatus.replace("\\s".toRegex(), "")
             sbc = sku!!
             ibc = "null"
@@ -329,20 +335,32 @@ class DataBase(val context: Context){
 
     fun checkItem1(){
         val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-        val query = "SELECT * FROM pdamasters WHERE BarcodeSBC='$sku'"
+        val query = "SELECT * FROM pda_masters WHERE barcodeIBC='$sku'"
         val cursor = db.rawQuery(query,null)
         val withoutstatus :String
         if(cursor.moveToFirst()){
-            pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
-            stock = cursor.getString(cursor.getColumnIndex("Stock"))
-            packSz = cursor.getString(cursor.getColumnIndex("PackSize"))
-            withoutstatus = cursor.getString(cursor.getColumnIndex("Status"))
-            retail = cursor.getString(cursor.getColumnIndex("RetailPrice"))
-            cost = cursor.getString(cursor.getColumnIndex("Cost"))
-            stockID = cursor.getString(cursor.getColumnIndex("CountName"))
-            sku_bc = cursor.getString(cursor.getColumnIndex("SKU"))
+            pdName = cursor.getString(cursor.getColumnIndex("productName"))
+            stock = cursor.getString(cursor.getColumnIndex("stock"))
+            packSz = cursor.getString(cursor.getColumnIndex("packSize"))
+            withoutstatus = cursor.getString(cursor.getColumnIndex("status"))
+            retail = cursor.getString(cursor.getColumnIndex("retailPrice"))
+            cost = cursor.getString(cursor.getColumnIndex("cost"))
+            stockID = cursor.getString(cursor.getColumnIndex("stocktakeId"))
+            sku_bc = cursor.getString(cursor.getColumnIndex("sku"))
+            size = cursor.getString(cursor.getColumnIndex("size"))
+            try{
+                exp = cursor.getString(cursor.getColumnIndex("expiryDate"))
+            }
+            catch(e:Exception){
+                exp = ""
+            }
+            if(exp == null){
+                exp = ""
+            }
+            color = cursor.getString(cursor.getColumnIndex("color"))
+            note = cursor.getString(cursor.getColumnIndex("remark"))
             sbc = sku!!
-            ibc = cursor.getString(cursor.getColumnIndex("BarcodeIBC"))
+            ibc = cursor.getString(cursor.getColumnIndex("barcodeIBC"))
             status = withoutstatus.replace("\\s".toRegex(), "")
             if(cost == null){
                 cost = "0"
@@ -356,7 +374,7 @@ class DataBase(val context: Context){
 //            summeryValue()
         }
         else{
-            val query = "SELECT * FROM pdamasters WHERE BarcodeIBC='$sku'"
+            val query = "SELECT * FROM pda_masters WHERE BarcodeIBC='$sku'"
             val cursor = db.rawQuery(query,null)
             if(cursor.moveToFirst()) {
                 pdName = cursor.getString(cursor.getColumnIndex("ProductName"))
@@ -385,6 +403,7 @@ class DataBase(val context: Context){
                 ckItem = 0
             }
         }
+        cursor.close()
         db.close()
     }
 
@@ -508,7 +527,7 @@ class DataBase(val context: Context){
         try{
             val db = context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
             val selectQuery =
-                "SELECT * FROM pdamasters WHERE BarcodeIBC = '$sku'"
+                "SELECT * FROM pda_masters WHERE BarcodeIBC = '$sku'"
             val cursor = db.rawQuery(selectQuery, null)
             if (cursor.moveToFirst()) {
 
@@ -971,10 +990,19 @@ class DataBase(val context: Context){
         db.close()
     }
 
+    fun update(fileName:String){
+        val db=context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE, null)
+        val valu = ContentValues()
+        valu.put("updated", updateCheck)
+        db.update("date",valu,"name=?", arrayOf(fileName))
+        println("Update COMPLETED")
+        db.close()
+    }
+
     fun getTotalItems(){
         try{
             val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-            val query = "SELECT count(id) as id FROM pdamasters"
+            val query = "SELECT count(id) as id FROM pda_masters"
             val cursor = db.rawQuery(query,null)
             if(cursor.moveToFirst()){
                 totalItems = cursor.getInt(0)
@@ -1086,28 +1114,33 @@ class DataBase(val context: Context){
     fun getBu(){
         try{
             val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
-            val query = "SELECT * FROM pdamasters"
+            val query = "SELECT storeCode,storeName FROM stocktakes"
             val cursor = db.rawQuery(query,null)
 
             if(cursor.moveToFirst()){
-                stockTakeID = cursor.getString(1)
-                storeCode   = cursor.getString(2)
-                storeName   = cursor.getString( 3)
-                if(stockTakeID == "Null"){ stockTakeID = ""}
+                storeCode   = cursor.getString(0)
+                storeName   = cursor.getString( 1)
                 if(storeCode == "Null"){ storeCode = ""}
                 if(storeName == "Null"){ storeName = ""}
             }
 
-            val query1 = "SELECT * FROM pdamaster_businesses"
+            val query1 = "SELECT bu FROM stocktakes"
             val cursor1 = db.rawQuery(query1,null)
             if(cursor1.moveToFirst()){
-                BU = cursor1.getString(2)
+                BU = cursor1.getString(0)
+            }
+
+            val query2 = "SELECT countName FROM stocktakes"
+            val cursor2 = db.rawQuery(query2, null)
+            if(cursor2.moveToFirst()){
+                stockTakeID = cursor2.getString(0)
+                if(stockTakeID == "Null"){ stockTakeID = ""}
             }
 
             db.close()
         }
         catch(e:Exception){
-
+            e.printStackTrace()
         }
 
     }
@@ -1151,7 +1184,7 @@ class DataBase(val context: Context){
 
     fun checkStockTakeID(){
         val db = context.openOrCreateDatabase(REAL_DATABASE,Context.MODE_PRIVATE,null)
-        val query = "SELECT CountName FROM pdamasters"
+        val query = "SELECT countName FROM stocktakes"
         val cursor = db.rawQuery(query,null)
         if(cursor.moveToFirst()){
             stocktakeID = cursor.getString(0)
@@ -1179,4 +1212,27 @@ class DataBase(val context: Context){
 //        println(fileList.size)
     }
 
+    fun getDocs(){
+        val db = context.openOrCreateDatabase(DATABASE_2, Context.MODE_PRIVATE,null)
+        val query = "SELECT name FROM date"
+        val cursor = db.rawQuery(query,null)
+        if(cursor.moveToFirst()){
+            docsArray.clear()
+            do{
+                docsArray.add(cursor.getString(0))
+            }while (cursor.moveToNext() )
+        }
+        else{
+            docsArray.clear()
+        }
+    }
+
+    fun updateExp(remark:String, exp:String){
+        val db=context.openOrCreateDatabase(REAL_DATABASE, Context.MODE_PRIVATE, null)
+        val valu = ContentValues()
+        valu.put("remark", remark)
+        valu.put("expiryDate",exp)
+        db.update("pda_masters",valu,"sku=?", arrayOf(sku_bc))
+        db.close()
+    }
 }

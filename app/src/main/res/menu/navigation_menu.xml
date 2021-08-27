@@ -7,6 +7,10 @@
             android:title="Restore Master Offline"/>
 
         <item
+            android:id="@+id/nav_export"
+            android:title="Export"/>
+
+        <item
             android:id="@+id/nav_clear"
             android:title="Clear Data"/>
 
